@@ -7,6 +7,8 @@ export const GET: APIRoute = ({ site }) => {
     'User-agent: *',
     'Allow: /',
     `Disallow: ${new URL(absUrl('/brand/', origin)).pathname}`,
+    `Disallow: ${new URL(absUrl('/admin/', origin)).pathname}`,
+    `Disallow: ${new URL(absUrl('/protokol/', origin)).pathname}`,
     '',
     `Sitemap: ${absUrl('/sitemap-index.xml', origin)}`,
     '',

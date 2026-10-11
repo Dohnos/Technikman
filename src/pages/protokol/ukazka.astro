@@ -1,0 +1,9 @@
+---
+import App from '../../layouts/App.astro';
+import ProtocolViewer from '../../components/ProtocolViewer.astro';
+import { sampleProtocol } from '../../data/protocol-sample';
+---
+
+<App title="Ukázkový protokol z prověrky | Proklepto" section="Ukázka protokolu">
+  <ProtocolViewer sample={sampleProtocol} />
+</App>

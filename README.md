@@ -1,4 +1,4 @@
-# Proklepto · v1.2.0
+# Proklepto · v1.3.0
 
 Web nezávislého technika pro **prověrku ojetých aut** – Olomoucký kraj a celá Morava.
 
@@ -47,6 +47,32 @@ Kalendář na webu ukazuje volné dny a časy podle pravidel v `src/data/booking
 
 > Vestavěný kalendář nezná skutečnou obsazenost. Je to žádost o termín, proto web výslovně říká, že termín potvrdíte telefonicky.
 
+## Protokoly a admin
+
+**Admin:** `/admin/`. Formulář má pevnou strukturu protokolu (`src/data/protocol.ts`):
+
+1. Základní údaje
+2. Vozidlo
+3. Kontrola: 8 sekcí s pevnými body, u každého OK / Pozor / Závada / –, poznámka a odhad ceny opravy
+4. Měření laku (11 dílů)
+5. Verdikt
+6. Fotodokumentace
+
+- **Koncepty** se ukládají v prohlížeči (localStorage). Tlačítkem „Záloha všech“ si je stáhnete do souboru.
+- **„Odkaz pro klienta“** vytvoří odkaz `/protokol/#…`. Celý protokol je zabalený v odkazu, takže web nepotřebuje server ani databázi.
+- **Zobrazení protokolu** `/protokol/`: verdikt, 3D auto (three.js) s mapou laku po dílech a špendlíky u nálezů, přehled sekcí, detail bodů a měření laku. Tlačítko „Stáhnout PDF“ protokol vytiskne. Ukázka je na `/protokol/ukazka/`.
+- **Admin ani protokoly nejsou indexované** (noindex, robots.txt).
+
+### Podpis protokolů (doporučeno)
+
+Admin je veřejná stránka, takže bez podpisu by si kdokoli mohl vyrobit „protokol Proklepto“. Podpis tomu zabrání:
+
+1. V `/admin` otevřete **Podpis** a zvolte **Vytvořit nový klíč**. Soukromý klíč zůstane jen ve vašem prohlížeči.
+2. Zkopírujte řádek `publicKey: { x: '…', y: '…' },` a vložte ho do `src/data/protocol.ts` místo `publicKey: null as …` (ponechte `as null | { x: string; y: string }`). Pak nahrajte web.
+3. Stáhněte si **Zálohu klíče** a uložte ji bezpečně. Bez ní na jiném počítači nepodepíšete. Kdo ji má, může podepisovat vaším jménem.
+
+Klient pak u protokolu vidí **„Ověřený protokol Proklepto“**. Upravený nebo cizí odkaz se zobrazí s varováním.
+
 ## Vývoj
 
 ```bash
@@ -84,10 +110,11 @@ Doménu nastavte v `astro.config.mjs` (`SITE`) a v `src/data/site.ts`. Na GitHub
 ```
 src/
   components/   GarageStage (3D úvod), Hero, Report (ukázka protokolu), Services, Checks, Process, Booking (kalendář), Coverage (mapa), Faq…
-  scripts/      garage.ts – 3D scéna (auto, mechanik, kamera, animace podle scrollu)
-  data/         site.ts, regions.ts, booking.ts – veškerý obsah
+  scripts/      garage.ts (3D úvod), car-model.ts (sdílené auto), protocol3d.ts, protocol-render.ts,
+                protocol-codec.ts (odkaz + podpis), admin.ts
+  data/         site.ts, regions.ts, booking.ts, protocol.ts (struktura protokolu) – veškerý obsah
   layouts/      Base.astro – SEO hlavička, JSON-LD, scroll reveal
-  pages/        index, proverka-auta/[slug], proverka-auta/index, brand, 404
+  pages/        index, proverka-auta/[slug], proverka-auta/index, admin, protokol, protokol/ukazka, brand, 404
   styles/       global.css – design tokeny
 docs/BRAND.md   brand manuál (webová verze na /brand/)
 ```

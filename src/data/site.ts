@@ -5,7 +5,7 @@
 
 export const site = {
   name: 'Proklepto',
-  version: '1.2.0',
+  version: '1.3.0',
   url: 'https://proklepto.cz',
   tagline: 'Ojetinu nejdřív proklepneme.',
   description:

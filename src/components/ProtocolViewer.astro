@@ -1,0 +1,101 @@
+---
+import '../styles/protocol.css';
+import { withBase } from '../lib/paths';
+import type { Protocol } from '../data/protocol';
+
+interface Props {
+  sample?: Protocol;
+}
+const { sample } = Astro.props;
+---
+
+<div class="pv" data-pv data-sample={sample ? JSON.stringify(sample) : undefined}>
+  <div class="pv-loading">Načítám protokol…</div>
+</div>
+<template data-pv-empty>
+  <div class="pv-error">
+    <h1>Protokol nenalezen</h1>
+    <p>Odkaz je neúplný nebo poškozený. Zkontrolujte, že jste zkopírovali celý odkaz z e-mailu.</p>
+    <a class="btn btn--ghost" href={withBase('/protokol/ukazka/')}>Prohlédnout ukázkový protokol</a>
+  </div>
+</template>
+
+<script>
+  import { decodeProtocol } from '../scripts/protocol-codec';
+  import { renderProtocol, type Trust } from '../scripts/protocol-render';
+  import { protocolConfig, type Protocol } from '../data/protocol';
+
+  const root = document.querySelector<HTMLElement>('[data-pv]')!;
+  // jiný protokol v tom samém okně (změna #) → načíst znovu
+  if (!root.dataset.sample) window.addEventListener('hashchange', () => location.reload());
+
+  const showError = () => {
+    const tpl = document.querySelector<HTMLTemplateElement>('[data-pv-empty]')!;
+    root.replaceChildren(tpl.content.cloneNode(true));
+  };
+
+  async function load(): Promise<{ protocol: Protocol; trust: Trust } | null> {
+    if (root.dataset.sample) return { protocol: JSON.parse(root.dataset.sample), trust: 'sample' };
+    const hash = decodeURIComponent(location.hash.slice(1));
+    if (!hash) return null;
+    const preview = hash.startsWith('draft:');
+    const res = await decodeProtocol(preview ? hash.slice(6) : hash, protocolConfig.publicKey);
+    const trust: Trust = preview
+      ? 'draft'
+      : !res.signed
+        ? 'unsigned'
+        : res.verified === null
+          ? 'nokey'
+          : res.verified
+            ? 'verified'
+            : 'invalid';
+    return { protocol: res.protocol, trust };
+  }
+
+  load()
+    .then(async (data) => {
+      if (!data) return showError();
+      const { protocol, trust } = data;
+      document.title = `Protokol ${protocol.id} – ${[protocol.car.make, protocol.car.model].join(' ')} | Proklepto`;
+      renderProtocol(root, protocol, trust);
+
+      root.querySelector('[data-pv-copy]')?.addEventListener('click', async (e) => {
+        const btn = e.currentTarget as HTMLButtonElement;
+        await navigator.clipboard.writeText(location.href).catch(() => {});
+        const label = btn.querySelector('span')!;
+        label.textContent = 'Zkopírováno';
+        setTimeout(() => (label.textContent = 'Kopírovat odkaz'), 1800);
+      });
+
+      const canvas = root.querySelector<HTMLCanvasElement>('[data-pv-canvas]')!;
+      const overlay = root.querySelector<HTMLElement>('[data-pv-overlay]')!;
+      const snapshotImg = root.querySelector<HTMLImageElement>('[data-pv-snapshot]')!;
+      let scene: Awaited<ReturnType<typeof import('../scripts/protocol3d')['createProtocolScene']>> | null = null;
+
+      try {
+        const { createProtocolScene } = await import('../scripts/protocol3d');
+        scene = createProtocolScene(canvas, overlay, protocol);
+        new IntersectionObserver(([e]) => (e.isIntersecting ? scene!.start() : scene!.stop())).observe(canvas);
+        window.addEventListener('resize', () => scene!.resize());
+        root.querySelectorAll<HTMLButtonElement>('[data-pv-layer]').forEach((b) =>
+          b.addEventListener('click', () => {
+            const on = !b.classList.contains('is-on');
+            b.classList.toggle('is-on', on);
+            scene!.setLayer(b.dataset.pvLayer as 'paint' | 'findings', on);
+          }),
+        );
+      } catch {
+        root.querySelector('.pv-3d')?.remove();
+      }
+
+      const beforePrint = () => {
+        if (scene) snapshotImg.src = scene.snapshot();
+      };
+      window.addEventListener('beforeprint', beforePrint);
+      root.querySelector('[data-pv-print]')?.addEventListener('click', () => {
+        beforePrint();
+        window.print();
+      });
+    })
+    .catch(showError);
+</script>

@@ -1,0 +1,93 @@
+---
+// Jednoduchý layout pro aplikační stránky (protokol, admin) – bez marketingové hlavičky, neindexuje se.
+import '@fontsource-variable/plus-jakarta-sans/wght.css';
+import '../styles/global.css';
+import fontLatin from '@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2?url';
+import Logo from '../components/Logo.astro';
+import { withBase } from '../lib/paths';
+
+interface Props {
+  title: string;
+  section?: string;
+  wide?: boolean;
+}
+const { title, section, wide = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#16181B" />
+    <link rel="preload" href={fontLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <header class="app-top">
+      <div class:list={['app-top__bar', { wide }]}>
+        <Logo size={30} />
+        {section && <span class="app-top__section">{section}</span>}
+        <slot name="top" />
+      </div>
+    </header>
+    <main class:list={['app-main', { wide }]}>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  .app-top {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    padding: 12px var(--edge) 0;
+  }
+  .app-top__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    max-width: 1160px;
+    margin-inline: auto;
+    height: 60px;
+    padding: 0 10px 0 18px;
+    border-radius: var(--pill);
+    background: rgb(255 255 255 / 0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--line);
+  }
+  .app-top__bar.wide,
+  .app-main.wide {
+    max-width: 1320px;
+  }
+  .app-top__section {
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--pill);
+    background: var(--bg);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--ink-2);
+  }
+  .app-main {
+    max-width: 1160px;
+    margin: 1rem auto 0;
+    padding: 0 var(--edge) 2rem;
+  }
+  @media print {
+    .app-top {
+      display: none;
+    }
+    .app-main {
+      margin: 0;
+      padding: 0;
+      max-width: none;
+    }
+  }
+</style>

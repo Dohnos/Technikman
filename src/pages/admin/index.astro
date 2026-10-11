@@ -1,0 +1,830 @@
+---
+import App from '../../layouts/App.astro';
+import Icon from '../../components/Icon.astro';
+import { sections, panels, verdicts, statuses, itemKey, paintScale } from '../../data/protocol';
+
+const carFields = [
+  { name: 'car.make', label: 'Značka', placeholder: 'Škoda', required: true },
+  { name: 'car.model', label: 'Model', placeholder: 'Octavia Combi III', required: true },
+  { name: 'car.engine', label: 'Motor', placeholder: '2.0 TDI, 110 kW' },
+  { name: 'car.fuel', label: 'Palivo', list: ['Benzín', 'Nafta', 'Hybrid', 'Elektro', 'LPG', 'CNG'] },
+  { name: 'car.gearbox', label: 'Převodovka', list: ['Manuál', 'Automat', 'Automat DSG', 'CVT'] },
+  { name: 'car.year', label: 'Rok výroby', placeholder: '2018', inputmode: 'numeric' },
+  { name: 'car.km', label: 'Najeto (km)', placeholder: '148 200', inputmode: 'numeric' },
+  { name: 'car.vin', label: 'VIN', placeholder: '17 znaků', wide: true },
+  { name: 'car.plate', label: 'SPZ' },
+  { name: 'car.color', label: 'Barva' },
+  { name: 'car.price', label: 'Cena v inzerátu (Kč)', inputmode: 'numeric' },
+  { name: 'car.ad', label: 'Odkaz na inzerát', type: 'url', placeholder: 'https://', wide: true },
+];
+const side = (prefix: string) => panels.filter((p) => p.id.endsWith(prefix));
+const paintGroups = [
+  { title: 'Levá strana', items: [...side('LP'), ...side('LZ')] },
+  { title: 'Střed', items: panels.filter((p) => ['kapota', 'strecha', 'kufr'].includes(p.id)) },
+  { title: 'Pravá strana', items: [...side('PP'), ...side('PZ')] },
+];
+const statusOrder = ['ok', 'warn', 'bad', 'na'] as const;
+---
+
+<App title="Admin – protokoly | Proklepto" section="Admin · Protokoly" wide>
+  <div slot="top" class="adm-top">
+    <span class="adm-key" data-key-status></span>
+    <button class="btn btn--ghost adm-top__btn" type="button" data-open-settings><Icon name="lock" size={18} /> Podpis</button>
+  </div>
+
+  <div class="adm">
+    <aside class="adm-side">
+      <button class="btn btn--accent btn--block" type="button" data-new><Icon name="plus" size={18} /> Nový protokol</button>
+      <ul class="adm-list" data-list></ul>
+      <div class="adm-side__io">
+        <button class="btn btn--ghost btn--block" type="button" data-export><Icon name="download" size={18} /> Záloha všech</button>
+        <label class="btn btn--ghost btn--block">
+          <Icon name="upload" size={18} /> Načíst zálohu
+          <input type="file" accept="application/json" hidden data-import />
+        </label>
+      </div>
+      <p class="adm-note">Protokoly se ukládají jen v tomto prohlížeči. Pravidelně si stáhněte zálohu.</p>
+    </aside>
+
+    <form class="adm-form" data-form autocomplete="off" novalidate>
+      <section class="adm-card">
+        <h2><span>1</span> Základní údaje</h2>
+        <div class="adm-grid">
+          <label class="fld"><span>Číslo protokolu</span><input name="id" required /></label>
+          <label class="fld"><span>Datum prověrky</span><input name="date" type="date" required /></label>
+          <label class="fld"><span>Místo</span><input name="place" placeholder="Olomouc" /></label>
+          <label class="fld"><span>Klient</span><input name="client" placeholder="Jméno klienta" /></label>
+          <label class="fld"><span>Technik</span><input name="tech" /></label>
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2><span>2</span> Vozidlo</h2>
+        <div class="adm-grid">
+          {carFields.map((f) => (
+            <label class:list={['fld', { 'fld--wide': f.wide }]}>
+              <span>{f.label}{f.required && <em> *</em>}</span>
+              <input
+                name={f.name}
+                type={f.type ?? 'text'}
+                placeholder={f.placeholder}
+                inputmode={f.inputmode as any}
+                list={f.list ? `dl-${f.name}` : undefined}
+                required={f.required}
+              />
+              {f.list && <datalist id={`dl-${f.name}`}>{f.list.map((o) => <option value={o} />)}</datalist>}
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2><span>3</span> Kontrola</h2>
+        <p class="adm-hint">U každého bodu vyberte stav. Poznámka a odhad ceny opravy se zobrazí u stavu Pozor nebo Závada.</p>
+        <div class="adm-sections">
+          {sections.map((sec) => (
+            <div class="adm-sec" data-sec={sec.id}>
+              <header>
+                <span class="adm-sec__icon"><Icon name={sec.icon} size={20} /></span>
+                <h3>{sec.title}</h3>
+                <span class="adm-sec__status" data-sec-status></span>
+                <button type="button" class="adm-mini" data-all-ok={sec.id}>Vše OK</button>
+              </header>
+              {sec.items.map((it) => {
+                const key = itemKey(sec.id, it.id);
+                return (
+                  <div class="adm-item" data-item={key}>
+                    <span class="adm-item__label">{it.label}</span>
+                    <div class="seg" role="radiogroup" aria-label={it.label}>
+                      {statusOrder.map((s) => (
+                        <label class={`seg__opt seg__opt--${s}`} title={statuses[s].label}>
+                          <input type="radio" name={`s:${key}`} value={s} />
+                          <span>{statuses[s].short}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <div class="adm-item__extra">
+                      <input name={`n:${key}`} placeholder="Poznámka (např. co přesně a kde)" />
+                      <input name={`c:${key}`} type="number" min="0" step="100" placeholder="Oprava Kč" inputmode="numeric" />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2><span>4</span> Měření laku <small>µm</small></h2>
+        <p class="adm-hint">Do {paintScale.ok} µm originál (zelená), do {paintScale.warn} µm přelakováno (žlutá), nad je tmel nebo oprava (červená). Prázdné = neměřeno.</p>
+        <div class="adm-paint">
+          {paintGroups.map((g) => (
+            <div class="adm-paint__col">
+              <h3>{g.title}</h3>
+              {g.items.map((pn) => (
+                <label class="adm-paint__fld">
+                  <i data-paint-dot={pn.id}></i>
+                  <span>{pn.label}</span>
+                  <input name={`paint.${pn.id}`} type="number" min="0" max="2000" inputmode="numeric" placeholder="–" />
+                </label>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2><span>5</span> Verdikt</h2>
+        <div class="adm-verdicts">
+          {Object.entries(verdicts).map(([id, v]) => (
+            <label class={`adm-verdict adm-verdict--${v.tone}`}>
+              <input type="radio" name="verdict" value={id} />
+              <Icon name={v.icon} size={22} />
+              <span>{v.label}</span>
+            </label>
+          ))}
+        </div>
+        <label class="fld fld--wide"><span>Shrnutí pro klienta</span><textarea name="summary" rows="4" placeholder="2–3 věty: celkový stav, hlavní nálezy, co udělat před koupí."></textarea></label>
+        <div class="adm-grid">
+          <label class="fld"><span>Doporučená sleva (Kč)</span><input name="discount" inputmode="numeric" placeholder="15 000" /></label>
+          <div class="fld"><span>Odhad oprav (součet)</span><output class="adm-cost" data-cost>0 Kč</output></div>
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2><span>6</span> Fotodokumentace</h2>
+        <label class="fld fld--wide"><span>Odkaz na galerii fotek</span><input name="gallery" type="url" placeholder="https://photos.app.goo.gl/…" /></label>
+        <p class="adm-hint">Fotky nahrajte do sdíleného alba (Google Fotky, OneDrive, Dropbox…) a vložte sem odkaz.</p>
+      </section>
+    </form>
+  </div>
+
+  <div class="adm-bar">
+    <span class="adm-saved" data-saved>Uloženo</span>
+    <div class="adm-bar__btns">
+      <button class="btn btn--ghost" type="button" data-preview><Icon name="eye" size={18} /> Náhled</button>
+      <button class="btn btn--ghost" type="button" data-download><Icon name="download" size={18} /> JSON</button>
+      <button class="btn btn--accent" type="button" data-share><Icon name="share" size={18} /> Odkaz pro klienta</button>
+    </div>
+  </div>
+
+  <div class="adm-toast" data-toast hidden>
+    <p data-toast-text></p>
+    <input readonly data-toast-link />
+    <div>
+      <a class="btn btn--ghost" target="_blank" rel="noopener" data-toast-open><Icon name="eye" size={18} /> Otevřít</a>
+      <button class="btn" type="button" data-toast-close>Hotovo</button>
+    </div>
+  </div>
+
+  <dialog class="adm-dialog" data-settings>
+    <form method="dialog" class="adm-dialog__body">
+      <h2><Icon name="lock" size={22} /> Podpis protokolů</h2>
+      <p>
+        Odkaz pro klienta se podepíše vaším soukromým klíčem. Stránka protokolu pak ověří, že protokol vydal Proklepto
+        a nikdo ho neupravil. Bez klíče by si kdokoli mohl vyrobit „protokol Proklepto“.
+      </p>
+      <div class="adm-dialog__state" data-key-state></div>
+      <div class="adm-dialog__pub" data-key-pub hidden>
+        <p><b>Veřejný klíč</b> vložte do <code>src/data/protocol.ts</code> (pole <code>publicKey</code>) a nahrajte web:</p>
+        <textarea readonly rows="3" data-key-snippet></textarea>
+        <button type="button" class="btn btn--ghost" data-key-copy><Icon name="copy" size={18} /> Kopírovat</button>
+      </div>
+      <div class="adm-dialog__btns">
+        <button type="button" class="btn btn--accent" data-key-generate><Icon name="key" size={18} /> Vytvořit nový klíč</button>
+        <button type="button" class="btn btn--ghost" data-key-export><Icon name="download" size={18} /> Záloha klíče</button>
+        <label class="btn btn--ghost">
+          <Icon name="upload" size={18} /> Načíst klíč
+          <input type="file" accept="application/json" hidden data-key-import />
+        </label>
+      </div>
+      <p class="adm-warn">Zálohu klíče uchovejte v bezpečí a nikomu ji neposílejte. Kdo ji má, může podepisovat protokoly vaším jménem.</p>
+      <button class="btn btn--block" value="close">Zavřít</button>
+    </form>
+  </dialog>
+</App>
+
+<style>
+  .adm-top {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-left: auto;
+  }
+  .adm-top__btn {
+    padding: 0.55rem 1rem;
+    font-size: 0.9rem;
+  }
+  .adm-key :global(.pill) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--pill);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .adm-key :global(.pill--ok) {
+    background: var(--ok-soft);
+    color: var(--ok);
+  }
+  .adm-key :global(.pill--warn) {
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+
+  .adm {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1rem;
+    align-items: start;
+    padding-bottom: 6rem;
+  }
+  .adm-side {
+    position: sticky;
+    top: 84px;
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    max-height: calc(100vh - 100px);
+    overflow: auto;
+  }
+  .adm-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+  .adm-list :global(li) {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: var(--r-sm);
+  }
+  .adm-list :global(li.is-active) {
+    background: var(--accent-soft);
+  }
+  .adm-list :global(.adm-list__open) {
+    flex: 1;
+    display: grid;
+    padding: 0.55rem 0.7rem;
+    border: 0;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    border-radius: var(--r-sm);
+    line-height: 1.25;
+    min-width: 0;
+  }
+  .adm-list :global(.adm-list__open:hover) {
+    background: var(--bg);
+  }
+  .adm-list :global(.adm-list__open b) {
+    font-size: 0.92rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .adm-list :global(.adm-list__open small) {
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+  .adm-list :global(.adm-icon-btn) {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .adm-list :global(.adm-icon-btn:hover) {
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .adm-side__io {
+    display: grid;
+    gap: 0.4rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--line);
+  }
+  .adm-side__io .btn {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+  }
+  .adm-note {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .adm-form {
+    display: grid;
+    gap: 1rem;
+  }
+  .adm-card {
+    display: grid;
+    gap: 1rem;
+    padding: clamp(1.1rem, 2.5vw, 1.75rem);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .adm-card h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.25rem;
+  }
+  .adm-card h2 span {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.9rem;
+  }
+  .adm-card h2 small {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .adm-hint {
+    margin-top: -0.5rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .adm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+  .fld {
+    display: grid;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .fld em {
+    color: var(--accent);
+    font-style: normal;
+  }
+  .fld--wide {
+    grid-column: 1 / -1;
+  }
+  .fld input,
+  .fld textarea,
+  .adm-item__extra input,
+  .adm-paint__fld input {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    background: var(--bg);
+    font-weight: 500;
+    font-size: 0.97rem;
+  }
+  .fld textarea {
+    resize: vertical;
+  }
+  .fld input:focus,
+  .fld textarea:focus,
+  .adm-item__extra input:focus,
+  .adm-paint__fld input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #fff;
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .fld input.is-missing {
+    border-color: #d64545;
+    background: #fdecec;
+  }
+
+  /* kontrola */
+  .adm-sections {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .adm-sec {
+    border-radius: var(--r);
+    background: var(--bg);
+    padding: 0.5rem;
+  }
+  .adm-sec header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.5rem 0.6rem;
+  }
+  .adm-sec h3 {
+    font-size: 1.02rem;
+    margin-right: auto;
+  }
+  .adm-sec__icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--accent);
+  }
+  .adm-sec__status :global(.pill) {
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--pill);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .adm-sec__status :global(.pill--ok) {
+    background: var(--ok-soft);
+    color: var(--ok);
+  }
+  .adm-sec__status :global(.pill--warn) {
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+  .adm-sec__status :global(.pill--bad) {
+    background: #fde7e7;
+    color: #b42323;
+  }
+  .adm-sec__status :global(.pill--na) {
+    background: var(--surface);
+    color: var(--muted);
+  }
+  .adm-mini {
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--pill);
+    border: 1.5px solid var(--line-2);
+    background: var(--surface);
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .adm-mini:hover {
+    border-color: var(--ok);
+    color: var(--ok);
+  }
+  .adm-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem 1rem;
+    align-items: center;
+    padding: 0.6rem 0.75rem;
+    border-radius: 14px;
+    background: var(--surface);
+    margin-top: 0.35rem;
+  }
+  .adm-item__label {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .adm-item__extra {
+    grid-column: 1 / -1;
+    display: none;
+    grid-template-columns: 1fr 9rem;
+    gap: 0.5rem;
+  }
+  .adm-item.is-flagged .adm-item__extra,
+  .adm-item.has-note .adm-item__extra {
+    display: grid;
+  }
+  .seg {
+    display: inline-flex;
+    padding: 3px;
+    border-radius: var(--pill);
+    background: var(--bg);
+    gap: 2px;
+  }
+  .seg__opt {
+    position: relative;
+    cursor: pointer;
+  }
+  .seg__opt input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+  }
+  .seg__opt span {
+    display: block;
+    min-width: 3.4rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: var(--pill);
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--muted);
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+  .seg__opt input:focus-visible + span {
+    outline: 2px solid var(--accent);
+  }
+  .seg__opt--ok input:checked + span {
+    background: var(--ok);
+    color: #fff;
+  }
+  .seg__opt--warn input:checked + span {
+    background: #d69408;
+    color: #fff;
+  }
+  .seg__opt--bad input:checked + span {
+    background: #d64545;
+    color: #fff;
+  }
+  .seg__opt--na input:checked + span {
+    background: var(--line-2);
+    color: var(--ink);
+  }
+
+  /* lak */
+  .adm-paint {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+  .adm-paint__col {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+    padding: 0.75rem;
+    border-radius: var(--r);
+    background: var(--bg);
+  }
+  .adm-paint__col h3 {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.2rem;
+  }
+  .adm-paint__fld {
+    display: grid;
+    grid-template-columns: 12px 1fr 6rem;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .adm-paint__fld input {
+    background: #fff;
+    padding: 0.5rem 0.7rem;
+    text-align: right;
+  }
+  .adm-paint__fld i {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--line-2);
+  }
+  .adm-paint__fld :global(i.ok) {
+    background: #1e8a5a;
+  }
+  .adm-paint__fld :global(i.warn) {
+    background: #e3a008;
+  }
+  .adm-paint__fld :global(i.bad) {
+    background: #d64545;
+  }
+
+  /* verdikt */
+  .adm-verdicts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+  }
+  .adm-verdict {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1rem;
+    border-radius: var(--r);
+    border: 2px solid var(--line);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .adm-verdict input {
+    position: absolute;
+    opacity: 0;
+  }
+  .adm-verdict--ok:has(input:checked) {
+    border-color: var(--ok);
+    background: var(--ok-soft);
+    color: var(--ok);
+  }
+  .adm-verdict--warn:has(input:checked) {
+    border-color: #e3a008;
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+  .adm-verdict--bad:has(input:checked) {
+    border-color: #d64545;
+    background: #fde7e7;
+    color: #b42323;
+  }
+  .adm-cost {
+    display: block;
+    padding: 0.65rem 0.9rem;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    font-weight: 800;
+    font-size: 1.05rem;
+  }
+
+  /* spodní lišta */
+  .adm-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 14px;
+    translate: -50% 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+    border-radius: var(--pill);
+    background: rgb(255 255 255 / 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    max-width: calc(100% - 24px);
+  }
+  .adm-saved {
+    font-size: 0.85rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .adm-bar__btns {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .adm-bar .btn {
+    padding: 0.65rem 1.1rem;
+    font-size: 0.92rem;
+  }
+  .adm-toast {
+    position: fixed;
+    right: 16px;
+    bottom: 84px;
+    z-index: 35;
+    display: grid;
+    gap: 0.6rem;
+    width: min(440px, calc(100% - 32px));
+    padding: 1.1rem;
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+  .adm-toast[hidden] {
+    display: none;
+  }
+  .adm-toast p {
+    font-weight: 700;
+  }
+  .adm-toast input {
+    width: 100%;
+    padding: 0.55rem 0.8rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--line);
+    background: var(--bg);
+    font-size: 0.85rem;
+  }
+  .adm-toast div {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-end;
+  }
+
+  /* nastavení */
+  .adm-dialog {
+    border: 0;
+    border-radius: var(--r-lg);
+    padding: 0;
+    width: min(560px, calc(100% - 24px));
+    box-shadow: var(--shadow);
+  }
+  .adm-dialog::backdrop {
+    background: rgb(22 24 27 / 0.45);
+  }
+  .adm-dialog__body {
+    display: grid;
+    gap: 0.9rem;
+    padding: 1.5rem;
+  }
+  .adm-dialog__body h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.3rem;
+  }
+  .adm-dialog__body > p {
+    color: var(--ink-2);
+    font-size: 0.95rem;
+  }
+  .adm-dialog__state :global(.state) {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    padding: 0.75rem 0.9rem;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .adm-dialog__state :global(.state--ok) {
+    background: var(--ok-soft);
+    color: var(--ok);
+  }
+  .adm-dialog__state :global(.state--warn) {
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+  .adm-dialog__pub {
+    display: grid;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .adm-dialog__pub textarea {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--line);
+    background: var(--bg);
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 0.78rem;
+    resize: none;
+  }
+  .adm-dialog__pub .btn {
+    justify-self: start;
+    padding: 0.5rem 1rem;
+    font-size: 0.88rem;
+  }
+  .adm-dialog__btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .adm-dialog__btns .btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  .adm-warn {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 960px) {
+    .adm {
+      grid-template-columns: 1fr;
+    }
+    .adm-side {
+      position: static;
+      max-height: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .adm-item {
+      grid-template-columns: 1fr;
+    }
+    .adm-item__extra {
+      grid-template-columns: 1fr 7rem;
+    }
+    .adm-paint,
+    .adm-verdicts {
+      grid-template-columns: 1fr;
+    }
+    .adm-bar {
+      left: 12px;
+      right: 12px;
+      translate: none;
+      border-radius: var(--r-lg);
+      padding: 0.5rem;
+    }
+    .adm-saved {
+      display: none;
+    }
+    .adm-bar__btns {
+      width: 100%;
+    }
+    .adm-bar__btns .btn {
+      flex: 1;
+      padding: 0.6rem 0.5rem;
+      font-size: 0.85rem;
+    }
+    .adm-top .adm-key {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { initAdmin } from '../../scripts/admin';
+  initAdmin();
+</script>

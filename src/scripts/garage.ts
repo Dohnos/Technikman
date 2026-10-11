@@ -33,7 +33,7 @@ import {
   Vector3,
   WebGLRenderer,
 } from 'three';
-import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { buildCar, rbox as roundedBox } from './car-model';
 
 export type GarageLabel = { el: HTMLElement; anchor: [number, number, number]; at: number };
 
@@ -96,7 +96,7 @@ export function createGarage(canvas: HTMLCanvasElement, opts: Options) {
     parent.add(o);
     return o;
   };
-  const rbox = (w: number, h: number, d: number, r: number) => new RoundedBoxGeometry(w, h, d, 4, r);
+  const rbox = roundedBox;
 
   // ── Podlaha a plošina ──
   const floor = add(new CircleGeometry(40, 64), mat('#ECE8E1', 1), 0, 0, 0, scene, false);
@@ -109,52 +109,9 @@ export function createGarage(canvas: HTMLCanvasElement, opts: Options) {
   ring.rotation.x = Math.PI / 2;
 
   // ── Auto ──
-  const car = new Group();
+  const { car, hoodPivot, wheels } = buildCar({ add, mat, track: (...items) => disposables.push(...items) });
   car.position.y = 0.06;
   scene.add(car);
-  const paint = mat('#3F5B73', 0.42, 0.12);
-  const dark = mat('#1D2024', 0.85);
-  const glass = mat('#3B5568', 0.08, 0.45);
-  const chrome = mat('#CDD2D8', 0.25, 0.85);
-  const headMat = new MeshStandardMaterial({ color: '#FFF6DE', emissive: '#FFE6A6', emissiveIntensity: 0.9 });
-  const tailMat = new MeshStandardMaterial({ color: '#E0531F', emissive: '#E0531F', emissiveIntensity: 0.6 });
-  disposables.push(headMat, tailMat);
-
-  add(rbox(4.2, 0.72, 1.8, 0.3), paint, 0, 0.74, 0, car);
-  add(rbox(2.3, 0.66, 1.62, 0.3), paint, -0.3, 1.32, 0, car);
-  add(rbox(2.36, 0.4, 1.64, 0.16), glass, -0.3, 1.37, 0, car);
-  add(rbox(0.12, 0.42, 1.66, 0.04), paint, -0.25, 1.37, 0, car);
-  add(rbox(4.26, 0.16, 1.84, 0.08), dark, 0, 0.46, 0, car);
-  for (const z of [0.6, -0.6]) {
-    add(rbox(0.1, 0.14, 0.42, 0.05), headMat, 2.07, 0.9, z, car, false);
-    add(rbox(0.1, 0.12, 0.38, 0.05), tailMat, -2.07, 0.92, z, car, false);
-  }
-  // zrcátka
-  for (const z of [0.9, -0.9]) add(rbox(0.16, 0.12, 0.14, 0.05), paint, 0.72, 1.18, z, car);
-
-  // motor pod kapotou
-  add(rbox(0.9, 0.1, 1.1, 0.04), mat('#2A2E33', 0.55, 0.4), 1.45, 1.08, 0, car);
-  const cap = add(new CylinderGeometry(0.06, 0.06, 0.03, 16), mat('#E0531F', 0.5), 1.25, 1.13, 0.25, car);
-  cap.castShadow = false;
-
-  const hoodPivot = new Group();
-  hoodPivot.position.set(0.85, 1.12, 0);
-  car.add(hoodPivot);
-  add(rbox(1.22, 0.07, 1.66, 0.03), paint, 0.61, 0, 0, hoodPivot);
-
-  const wheels: Group[] = [];
-  for (const x of [1.35, -1.35]) {
-    for (const z of [0.86, -0.86]) {
-      const w = new Group();
-      w.position.set(x, 0.4, z);
-      car.add(w);
-      const tire = add(new CylinderGeometry(0.4, 0.4, 0.3, 32), dark, 0, 0, 0, w);
-      tire.rotation.x = Math.PI / 2;
-      const rim = add(new CylinderGeometry(0.24, 0.24, 0.32, 6), chrome, 0, 0, 0, w);
-      rim.rotation.x = Math.PI / 2;
-      wheels.push(w);
-    }
-  }
   const frontWheel = wheels[0]; // přední pravé (z +)
 
   // skenovací prstenec

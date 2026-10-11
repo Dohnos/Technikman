@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../lib/paths';
+import Icon from './Icon.astro';
 // Ukázka protokolu z prověrky – konkrétní a srozumitelné místo ilustrace.
 const rows = [
   { area: 'Historie a nájezd', note: 'Sedí, 6 servisních záznamů', ok: true },
@@ -29,6 +31,9 @@ const rows = [
     <span>Doporučení</span>
     <strong>Koupit, se slevou za nálezy</strong>
   </footer>
+  <a class="report__link" href={withBase('/protokol/ukazka/')}>
+    <Icon name="eye" size={18} /> Celý ukázkový protokol ve 3D <Icon name="arrow" size={18} class="icon-arrow" />
+  </a>
 </figure>
 
 <style>
@@ -110,6 +115,29 @@ const rows = [
   .report__verdict span {
     color: #b9bdc3;
     font-size: 0.88rem;
+  }
+  .report__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0 0.6rem 0.6rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--r);
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+  .report__link:hover {
+    background: #f9dccf;
+  }
+  .report__link :global(.icon-arrow) {
+    transition: transform 0.3s var(--spring);
+  }
+  .report__link:hover :global(.icon-arrow) {
+    transform: translateX(3px);
   }
   @keyframes row-in {
     from {

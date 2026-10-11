@@ -25,7 +25,7 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/brand/'),
+      filter: (page) => !/\/(brand|admin|protokol)\//.test(page),
       changefreq: 'monthly',
       priority: 0.7,
       i18n: { defaultLocale: 'cs', locales: { cs: 'cs-CZ' } },

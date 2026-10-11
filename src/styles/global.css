@@ -217,6 +217,7 @@ p {
   transform: translateY(0) scale(0.98);
 }
 .btn .icon {
+  flex-shrink: 0;
   transition: transform 0.3s var(--spring);
 }
 .btn:hover .icon-arrow {
