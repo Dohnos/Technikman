@@ -5,195 +5,118 @@
 
 export const site = {
   name: 'Proklepto',
-  version: '1.0.1',
+  version: '1.1.0',
   url: 'https://proklepto.cz',
   tagline: 'Ojetinu nejdřív proklepneme.',
   description:
-    'Nezávislá prověrka ojetého auta před koupí. Kontrola historie a VIN, tloušťky laku, diagnostika, zkušební jízda a fotoprotokol ještě ten den. Olomoucký kraj a celá Morava.',
+    'Nezávislá prověrka ojetého auta před koupí. Historie a VIN, lak, diagnostika, zkušební jízda a protokol s fotkami ještě ten den. Olomoucký kraj a celá Morava.',
   // TODO: doplnit skutečné kontaktní údaje
   phone: '+420 000 000 000',
   phoneHref: 'tel:+420000000000',
   email: 'info@proklepto.cz',
   baseCity: 'Olomouc',
   baseGeo: { lat: 49.5938, lon: 17.2509 },
-  hours: 'Po–So 8:00–19:00',
+  hours: 'Po–So 8:00–18:00',
   openingHoursSpec: [
-    { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '08:00', closes: '19:00' },
+    { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '08:00', closes: '18:00' },
   ],
   // Doprava
   freeRadiusKm: 25,
   pricePerKm: 8,
-  checkpoints: '120+',
 };
 
-export type Plan = {
+export type Service = {
   id: string;
   name: string;
   price: number;
   priceFrom?: boolean;
+  /** probíhá na místě u auta (true) nebo na dálku (false) */
+  onSite: boolean;
   lead: string;
-  cta: string;
   features: string[];
-  featured?: boolean;
-  icon: string;
+  main?: boolean;
 };
 
-export const plans: Plan[] = [
+export const services: Service[] = [
   {
-    id: 'online',
-    name: 'Prověrka online',
+    id: 'dalku',
+    name: 'Prověrka na dálku',
     price: 990,
-    cta: 'Chci prověrku online',
-    lead: 'Než vyrazíte na dlouhou cestu, víte, jestli se vůbec vyplatí.',
-    icon: 'search',
-    features: [
-      'Rozbor inzerátu a fotek',
-      'Historie vozu podle VIN',
-      'Kontrola leasingu, exekuce a odcizení',
-      'Cílené otázky prodejci po telefonu',
-      'Doporučení: jet / nejet',
-    ],
+    onSite: false,
+    lead: 'Než pojedete přes půl Moravy, zjistím, jestli to auto za cestu stojí.',
+    features: ['Historie podle VIN', 'Leasing, exekuce, odcizení', 'Rozbor inzerátu a fotek', 'Telefonát s prodejcem'],
   },
   {
-    id: 'kompletni',
-    name: 'Kompletní prověrka',
+    id: 'misto',
+    name: 'Prověrka na místě',
     price: 3990,
-    cta: 'Chci kompletní prověrku',
-    lead: 'Technik na místě. Auto proklepne od střechy po výfuk.',
-    icon: 'shield',
-    featured: true,
+    onSite: true,
+    main: true,
+    lead: 'Přijedu k autu a projdu ho celé. Výsledek vám zavolám ještě z místa.',
     features: [
-      'Vše z prověrky online',
-      `${site.checkpoints} kontrolních bodů na místě`,
-      'Měření tloušťky laku na všech dílech',
-      'Diagnostika řídicích jednotek (OBD)',
-      'Zkušební jízda a kontrola podvozku',
-      'Fotoprotokol ještě ten den',
-      'Argumenty pro vyjednání ceny',
+      'Vše z prověrky na dálku',
+      'Měření laku na každém dílu',
+      'Diagnostika řídicích jednotek',
+      'Motor, podvozek, zkušební jízda',
+      'Protokol s fotkami týž den',
     ],
   },
   {
-    id: 'na-klic',
+    id: 'klic',
     name: 'Auto na klíč',
     price: 9990,
     priceFrom: true,
-    cta: 'Chci auto na klíč',
-    lead: 'Najdeme, prověříme a pomůžeme koupit. Vy jen podepíšete.',
-    icon: 'key',
-    features: [
-      'Vyhledání aut podle rozpočtu',
-      'Kompletní prověrka až 3 vozů',
-      'Vyjednání ceny s prodejcem',
-      'Kontrola kupní smlouvy',
-      'Doprovod při předání a převodu',
-    ],
+    onSite: false,
+    lead: 'Řeknete rozpočet a požadavky. Auto najdu, prověřím a pomůžu s koupí.',
+    features: ['Výběr vhodných aut', 'Prověrka až 3 vozů', 'Vyjednání ceny', 'Kontrola smlouvy a převodu'],
   },
 ];
 
+export const mainService = services.find((s) => s.main)!;
+
 export const checks = [
-  {
-    icon: 'history',
-    title: 'Historie a VIN',
-    text: 'Stav tachometru v čase, servisní záznamy, nehody, leasing, odcizení i původ vozu.',
-  },
-  {
-    icon: 'layers',
-    title: 'Karoserie a lak',
-    text: 'Tloušťkoměrem změříme každý díl. Odhalíme přelakování, tmel i skrytou bouračku.',
-  },
-  {
-    icon: 'cpu',
-    title: 'Diagnostika OBD',
-    text: 'Načteme chybové paměti řídicích jednotek a hledáme smazané i skryté závady.',
-  },
-  {
-    icon: 'wrench',
-    title: 'Motor a převodovka',
-    text: 'Studený start, úniky oleje, hlučnost, spojka, DPF, turbo a chování automatu.',
-  },
-  {
-    icon: 'disc',
-    title: 'Podvozek a brzdy',
-    text: 'Tlumiče, ramena, uložení, kotouče, destičky, pneumatiky a koroze spodku.',
-  },
-  {
-    icon: 'seat',
-    title: 'Interiér a elektro',
-    text: 'Opotřebení vs. nájezd, klimatizace, elektronika, airbagy a stopy po vodě.',
-  },
-  {
-    icon: 'steering',
-    title: 'Zkušební jízda',
-    text: 'Řazení, tah motoru, vibrace, geometrie, brzdy a zvuky, které prodejce „neslyší“.',
-  },
-  {
-    icon: 'file',
-    title: 'Doklady',
-    text: 'Shoda VIN s doklady, servisní knížka, STK, počet majitelů a kupní smlouva.',
-  },
+  { icon: 'history', title: 'Historie a VIN', text: 'Nájezd v čase, servis, nehody, leasing, odcizení.' },
+  { icon: 'layers', title: 'Karoserie a lak', text: 'Tloušťka laku na každém dílu, spáry, koroze.' },
+  { icon: 'cpu', title: 'Diagnostika', text: 'Chybové paměti všech řídicích jednotek.' },
+  { icon: 'wrench', title: 'Motor a převodovka', text: 'Studený start, úniky, spojka, turbo, DPF.' },
+  { icon: 'disc', title: 'Podvozek a brzdy', text: 'Tlumiče, ramena, kotouče, pneumatiky.' },
+  { icon: 'seat', title: 'Interiér a elektro', text: 'Opotřebení vs. nájezd, klimatizace, výbava.' },
+  { icon: 'steering', title: 'Zkušební jízda', text: 'Řazení, tah, vibrace, brzdy, zvuky.' },
+  { icon: 'file', title: 'Doklady', text: 'Shoda VIN, servisní knížka, STK, smlouva.' },
 ];
 
 export const steps = [
-  {
-    icon: 'link',
-    title: 'Pošlete inzerát',
-    text: 'Odkaz na auto a kontakt na prodejce. Termín domluvíme obvykle do 48 hodin.',
-  },
-  {
-    icon: 'history',
-    title: 'Prověříme historii',
-    text: 'Ještě před výjezdem zkontrolujeme VIN a databáze. Podezřelé auto stopneme hned.',
-  },
-  {
-    icon: 'search',
-    title: 'Proklepneme auto',
-    text: 'Technik vyrazí na místo a auto projde bod po bodu včetně diagnostiky a jízdy.',
-  },
-  {
-    icon: 'file',
-    title: 'Dostanete verdikt',
-    text: 'Telefonát hned z místa a fotoprotokol ještě ten den. Jasně: koupit, nebo ne.',
-  },
+  { title: 'Vyberete termín', text: 'V kalendáři zvolíte službu a čas a pošlete odkaz na inzerát.' },
+  { title: 'Ověřím historii', text: 'Před výjezdem zkontroluji VIN. Když je auto podezřelé, řeknu vám to hned.' },
+  { title: 'Prověřím auto', text: 'Na místě 1,5 až 2,5 hodiny. Nemusíte u toho být.' },
+  { title: 'Dostanete verdikt', text: 'Telefonát z místa, protokol s fotkami ještě ten den.' },
 ];
 
 export const faqs = [
   {
     q: 'Kolik stojí prověrka ojetého auta?',
-    a: `Kompletní prověrka na místě stojí ${plans[1].price.toLocaleString('cs-CZ')} Kč. V Olomouci a do ${site.freeRadiusKm} km od ní je doprava zdarma, dál účtujeme ${site.pricePerKm} Kč/km. Samotná prověrka online (historie, VIN, inzerát) stojí ${plans[0].price} Kč.`,
+    a: `Prověrka na místě stojí ${mainService.price.toLocaleString('cs-CZ')} Kč. V Olomouci a do ${site.freeRadiusKm} km je doprava zdarma, dál ${site.pricePerKm} Kč/km. Prověrka na dálku (historie, VIN, inzerát) stojí ${services[0].price} Kč.`,
   },
   {
     q: 'Musím být u prověrky osobně?',
-    a: 'Nemusíte. Stačí poslat odkaz na inzerát a kontakt na prodejce. Termín domluvíme za vás, výsledek vám zavoláme přímo z místa a fotoprotokol pošleme e-mailem.',
+    a: 'Nemusíte. Termín domluvím s prodejcem, výsledek vám zavolám z místa a protokol pošlu e-mailem.',
   },
   {
-    q: 'Jak dlouho prověrka trvá?',
-    a: 'Na místě obvykle 1,5 až 2,5 hodiny podle typu vozu. Fotoprotokol dostanete ještě ten den.',
+    q: 'Kam jezdíte?',
+    a: 'Hlavně Olomoucký kraj. Běžně i Jihomoravský, Zlínský a Moravskoslezský kraj, po domluvě kamkoli.',
   },
   {
-    q: 'Kde všude působíte?',
-    a: 'Hlavní základnou je Olomouc a celý Olomoucký kraj. Běžně jezdíme i do Jihomoravského, Zlínského a Moravskoslezského kraje. Po domluvě kamkoli v Česku.',
-  },
-  {
-    q: 'Prověříte i auto v autobazaru nebo dovezené ze zahraničí?',
-    a: 'Ano. Prověřujeme vozy od soukromníků, z autobazarů i značkových dealerů. U dovezených aut prověříme historii v dostupných evropských databázích.',
-  },
-  {
-    q: 'Prověřujete i hybridy a elektromobily?',
-    a: 'Ano, prověřujeme osobní auta a dodávky do 3,5 t všech značek včetně hybridů a elektromobilů. U elektromobilů navíc kontrolujeme dostupné údaje o stavu baterie.',
+    q: 'Prověříte i auto z bazaru nebo dovezené?',
+    a: 'Ano. Soukromníci, bazary i dealeři. U dovozů ověřím historii v dostupných evropských databázích.',
   },
   {
     q: 'Co když prodejce prověrku odmítne?',
-    a: 'Je to varovný signál. Seriózní prodejce nemá co skrývat. Často pomůže, když termín domluvíme my a vysvětlíme, jak prověrka probíhá.',
+    a: 'Je to varovný signál. Často pomůže, když termín domluvím přímo já a vysvětlím, jak prověrka probíhá.',
   },
   {
-    q: 'Kdy a jak se platí?',
-    a: 'Platíte až po prověrce, převodem nebo v hotovosti. Pokud auto stopneme už při online kontrole historie, platíte jen online prověrku.',
+    q: 'Kdy se platí?',
+    a: 'Až po prověrce, převodem nebo hotově. Když auto vyřadím už podle historie, platíte jen prověrku na dálku.',
   },
-];
-
-export const brands = [
-  'Škoda', 'Volkswagen', 'Audi', 'BMW', 'Mercedes-Benz', 'Toyota', 'Hyundai', 'Kia',
-  'Ford', 'Peugeot', 'Renault', 'Volvo', 'Mazda', 'Seat', 'Cupra', 'Opel', 'Dacia', 'Tesla',
 ];
 
 export const formatPrice = (n: number) => `${n.toLocaleString('cs-CZ').replace(/\s/g, ' ')} Kč`;

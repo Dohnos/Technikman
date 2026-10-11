@@ -1,12 +1,12 @@
 ---
 import '@fontsource-variable/inter/wght.css';
-import '@fontsource-variable/bricolage-grotesque/wght.css';
+import '@fontsource-variable/archivo/wdth.css';
 import '../styles/global.css';
-import displayFont from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
+import displayFont from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
 import bodyFont from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { site, plans } from '../data/site';
+import { site, services } from '../data/site';
 import { cities, regions } from '../data/regions';
 import { withBase, absUrl } from '../lib/paths';
 
@@ -36,7 +36,7 @@ const business = {
   image: absUrl('/og-image.png', origin),
   telephone: site.phone,
   email: site.email,
-  priceRange: `${plans[0].price}–${plans[2].price} CZK`,
+  priceRange: `${Math.min(...services.map((s) => s.price))}–${Math.max(...services.map((s) => s.price))} CZK`,
   currenciesAccepted: 'CZK',
   paymentAccepted: 'Cash, Bank transfer',
   address: {
@@ -59,7 +59,7 @@ const business = {
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
     name: 'Prověrka ojetého vozu',
-    itemListElement: plans.map((p) => ({
+    itemListElement: services.map((p) => ({
       '@type': 'Offer',
       name: p.name,
       description: p.lead,
@@ -95,7 +95,7 @@ const jsonLd = [business, website, ...schema];
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex ? <meta name="robots" content="noindex, follow" /> : <meta name="robots" content="index, follow, max-image-preview:large" />}
-    <meta name="theme-color" content="#101828" />
+    <meta name="theme-color" content="#16181B" />
     <meta name="generator" content={Astro.generator} />
     <meta name="author" content={site.name} />
     <meta name="geo.region" content="CZ-71" />
@@ -133,7 +133,6 @@ const jsonLd = [business, website, ...schema];
   </head>
   <body>
     <a class="skip-link" href="#obsah">Přeskočit na obsah</a>
-    <div class="scroll-progress" aria-hidden="true"></div>
     <Header />
     <main id="obsah">
       <slot />
@@ -159,18 +158,6 @@ const jsonLd = [business, website, ...schema];
       } else {
         els.forEach((el) => el.classList.add('is-in'));
       }
-
-      // Sekce, které spouští vlastní animace při vstupu do viewportu
-      const scenes = document.querySelectorAll<HTMLElement>('[data-scene]');
-      const so = new IntersectionObserver(
-        (entries) =>
-          entries.forEach((e) => {
-            e.target.classList.toggle('in-view', e.isIntersecting);
-            if (e.isIntersecting) e.target.classList.add('seen');
-          }),
-        { threshold: 0.2 },
-      );
-      scenes.forEach((el) => so.observe(el));
     </script>
   </body>
 </html>

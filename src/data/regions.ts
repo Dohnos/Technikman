@@ -36,7 +36,7 @@ export const cities: City[] = [
     distanceKm: 0,
     nearby: ['Šternberk', 'Velká Bystřice', 'Hlubočky', 'Bohuňovice', 'Křelov', 'Velký Týnec'],
     intro:
-      'Olomouc je naše domovská základna. Ojeté auto v Olomouci a okolí prověříme nejrychleji a bez příplatku za dopravu, ať ho prodává autobazar, nebo soukromník na sídlišti.',
+      'Olomouc je moje základna. Auto v Olomouci a okolí prověřím nejrychleji a bez příplatku za dopravu, ať ho prodává bazar, nebo soukromník.',
     page: true,
   },
   {
@@ -49,7 +49,7 @@ export const cities: City[] = [
     distanceKm: 20,
     nearby: ['Kostelec na Hané', 'Konice', 'Němčice nad Hanou', 'Plumlov', 'Smržice'],
     intro:
-      'Prostějov máme za humny. Prověrku ojetiny v Prostějově a na Prostějovsku zvládneme často obratem a doprava je v ceně.',
+      'Prostějov je 20 minut od Olomouce. Doprava je v ceně a termín se obvykle najde do pár dnů.',
     page: true,
   },
   {
@@ -62,7 +62,7 @@ export const cities: City[] = [
     distanceKm: 25,
     nearby: ['Lipník nad Bečvou', 'Kojetín', 'Tovačov', 'Brodek u Přerova', 'Dřevohostice'],
     intro:
-      'Přerov a Přerovsko patří k místům, kam vyjíždíme nejčastěji. Auto v Přerově proklepneme bez příplatku za dopravu.',
+      'Do Přerova a okolí jezdím často. Doprava je v ceně prověrky.',
     page: true,
   },
   {
@@ -75,7 +75,7 @@ export const cities: City[] = [
     distanceKm: 55,
     nearby: ['Zábřeh', 'Mohelnice', 'Bludov', 'Postřelmov', 'Loučná nad Desnou'],
     intro:
-      'Na Šumpersku se prodává hodně aut z horských oblastí, kde dostávají zabrat podvozek a spodek karoserie. Při prověrce v Šumperku se na korozi díváme o to pečlivěji.',
+      'Auta ze Šumperska často jezdí v horách. Při prověrce se proto víc dívám na korozi, podvozek a brzdy.',
     page: true,
   },
   {
@@ -88,7 +88,7 @@ export const cities: City[] = [
     distanceKm: 90,
     nearby: ['Zlaté Hory', 'Javorník', 'Mikulovice', 'Lipová-lázně', 'Česká Ves'],
     intro:
-      'Auta z Jesenicka mají za sebou horské zimy, sůl a stoupání. Při prověrce v Jeseníku proto dáváme důraz na korozi, brzdy, spojku a pohon 4×4.',
+      'Auta z Jesenicka mají za sebou horské zimy a sůl. Víc se zaměřuji na korozi, brzdy, spojku a pohon 4×4.',
     page: true,
   },
   {
@@ -101,7 +101,7 @@ export const cities: City[] = [
     distanceKm: 40,
     nearby: ['Lipník nad Bečvou', 'Potštát', 'Drahotuše', 'Teplice nad Bečvou'],
     intro:
-      'Hranice leží na křižovatce cest na Ostravu i Zlín. Ojetinu v Hranicích a na Hranicku prověříme rychle a za férovou dopravu.',
+      'Hranice jsou kousek po D1. Prověrku na Hranicku zvládnu rychle a za rozumnou dopravu.',
     page: true,
   },
   {
@@ -114,7 +114,7 @@ export const cities: City[] = [
     distanceKm: 78,
     nearby: ['Modřice', 'Kuřim', 'Šlapanice', 'Rosice', 'Blansko', 'Židlochovice'],
     intro:
-      'Brno je největší trh s ojetinami na Moravě. Tolik nabídek znamená i hodně aut s upraveným nájezdem. Prověrku v Brně a okolí běžně spojujeme s více auty v jeden den.',
+      'V Brně je největší nabídka ojetin na Moravě, a s ní i nejvíc aut s upraveným nájezdem. Prověrky v Brně často spojuji, takže se dělí i doprava.',
     page: true,
   },
   {
@@ -127,7 +127,7 @@ export const cities: City[] = [
     distanceKm: 50,
     nearby: ['Bučovice', 'Slavkov u Brna', 'Rousínov', 'Ivanovice na Hané'],
     intro:
-      'Vyškov je na dálnici D1 kousek od Olomouce, takže prověrka ojetého auta ve Vyškově je rychlá a cenově příjemná.',
+      'Vyškov je po D1 kousek od Olomouce. Prověrka tu vychází rychle i cenově.',
     page: true,
   },
   {
@@ -140,7 +140,7 @@ export const cities: City[] = [
     distanceKm: 70,
     nearby: ['Otrokovice', 'Vizovice', 'Fryšták', 'Napajedla', 'Slušovice'],
     intro:
-      'Ve Zlíně a okolí prověřujeme auta od soukromníků i bazarů. Termín ve Zlíně se dá obvykle spojit s dalšími prověrkami ve Zlínském kraji.',
+      'Do Zlína a okolí jezdím pravidelně. Termín často spojím s dalšími prověrkami ve Zlínském kraji.',
     page: true,
   },
   {
@@ -153,7 +153,7 @@ export const cities: City[] = [
     distanceKm: 45,
     nearby: ['Hulín', 'Holešov', 'Chropyně', 'Bystřice pod Hostýnem', 'Morkovice'],
     intro:
-      'Kroměříž leží jen kousek za hranicí Olomouckého kraje. Prověrka ojetiny v Kroměříži a na Kroměřížsku je pro nás běžná trasa.',
+      'Kroměříž je hned za hranicí Olomouckého kraje, běžná trasa.',
     page: true,
   },
   {
@@ -166,7 +166,7 @@ export const cities: City[] = [
     distanceKm: 95,
     nearby: ['Havířov', 'Frýdek-Místek', 'Opava', 'Karviná', 'Nový Jičín'],
     intro:
-      'Do Ostravy to máme po D1 necelou hodinu. Prověrku auta v Ostravě se vyplatí objednat i kvůli široké nabídce dovezených vozů s nejasnou historií.',
+      'Do Ostravy je to po D1 necelá hodina. U dovezených aut ověřuji historii v evropských databázích.',
     page: true,
   },
   // Další body na mapě (bez vlastní stránky)

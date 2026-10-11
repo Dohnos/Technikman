@@ -1,47 +1,40 @@
-# Proklepto – brand manuál v1.0
+# Proklepto – brand manuál v1.1
 
 Webová verze s ukázkami: `/brand/`.
 
-## Název a myšlenka
-**Proklepto** vychází z „proklepnout“: důkladně prověřit, než se rozhodnete. Značka působí jako dobrý technik. Je přesná, přátelská a stojí na straně zákazníka.
-
-**Claim:** *Ojetinu nejdřív proklepneme.*
+## Myšlenka
+**Proklepto** vychází z „proklepnout“: důkladně prověřit, než se rozhodnete. Značka působí jako dobrý technik: věcně, přesně a v klidu. Nic nepřikrášluje.
 
 ## Logo
-- **Značka:** písmeno „P“, jehož bříško tvoří lupa a nožička rukojeť. Uvnitř lupy je zelená fajfka, tedy výsledek „v pořádku“.
-- **Podklad:** zaoblený čtverec, radius 28 % (18/64).
-- **Logotyp:** `proklepto` malými písmeny, Bricolage Grotesque ExtraBold (800), prostrkání −4 %.
-- **Ochranná zóna:** ¼ šířky značky. **Minimální velikost:** 24 px.
-- **Varianty:** tmavá značka na světlém pozadí, bílá značka na tmavém nebo oranžovém pozadí, jednobarevná.
-- Soubor: `public/favicon.svg` (vektor), `public/icon-512.png`.
+- **Značka:** písmeno „P“. Bříško tvoří lupa, nožička její rukojeť, fajfka v lupě znamená „v pořádku“.
+- **Barvy:** Asfalt (podklad) a Signál (lupa), fajfka bílá. Na tmavém pozadí je podklad bílý a fajfka tmavá.
+- **Logotyp:** `proklepto` malými písmeny, Archivo Bold, šířka 94 %.
+- **Ochranná zóna:** ¼ šířky značky. **Minimum:** 24 px.
+- Soubory: `public/favicon.svg`, `public/icon-512.png`.
 
 ## Barvy
 | Název | HEX | Použití |
 | --- | --- | --- |
-| Signál | `#FF5A1F` | primární akce, zvýraznění, značka |
-| Asfalt | `#101828` | text, tmavé prvky, podklad loga |
-| Kontrola | `#17C98A` | úspěch, „v pořádku“, fajfka |
-| Noc | `#0B1220` | tmavé sekce, patička |
-| Křída | `#F7F5F0` | pozadí stránky |
-| Jantar | `#FFB020` | doplňková barva, přechody |
+| Asfalt | `#16181B` | text, tmavé plochy, logo |
+| Papír | `#F7F6F3` | pozadí stránky |
+| Bílá | `#FFFFFF` | karty, formuláře |
+| Linka | `#E3E1DC` | oddělovače, rámečky |
+| Signál | `#E0531F` | **jediný akcent**: hlavní tlačítko, logo |
+| OK / Pozor | `#1E8A5A` / `#B7791F` | jen stavy v protokolu |
 
-Poměr: 60 % Křída/bílá · 25 % Asfalt/Noc · 10 % Signál · 5 % Kontrola.
-
-## Typografie
-- **Nadpisy:** Bricolage Grotesque, 700–800, letter-spacing −3,5 %, line-height 1.05.
-- **Text:** Inter, 400–650, základ 17 px, line-height 1.6.
+## Písmo
+- **Nadpisy:** Archivo 700, šířka 94 %, prostrkání −2 %.
+- **Text:** Inter 400–600, základ 17 px, řádkování 1,6.
 
 ## Ikony
-Vlastní sada 24 × 24 px, tah 1,75 px, kulaté konce a spoje (`src/components/Icon.astro`). V odznacích 52 px s radiusem 16 px a tónovaným pozadím.
+Lineární sada 24 × 24 px, tah 1,75 px (`src/components/Icon.astro`). Barva textu nebo Signál, nikdy v barevném podkladu.
 
-## Tvary a pohyb
-- Zaoblení: 12 / 20 / 28 / 40 px, tlačítka a štítky jako „pilulka“.
-- Easing: `cubic-bezier(0.22, 1, 0.36, 1)`, u hoveru jemná pružina `cubic-bezier(0.34, 1.56, 0.64, 1)`.
-- Animace mají smysl: sken, odhalení a fajfka. Vždy respektují `prefers-reduced-motion`.
+## Pravidla
+1. **Jeden akcent.** Oranžová jen pro hlavní akci a logo. Nikdy jako plocha nebo přechod.
+2. **Linky, ne stíny.** Oddělujeme tenkou linkou. Bez stínů, rozmazání a přechodů.
+3. **Konkrétně.** Ukazujeme skutečné věci: protokol, ceny, mapu. Žádné ilustrace pro efekt.
+4. **Stručně.** Krátké věty v první osobě. „Přijedu, zkontroluji, zavolám.“
+5. **Klidný pohyb.** Animace jen jemné objevení obsahu.
+6. **Neslibovat.** Píšeme jen to, co jde dodržet a ověřit.
 
-## Tón komunikace
-- ✓ Krátce a jasně. „Tohle auto nekupujte.“
-- ✓ Lidskou řečí, technické pojmy vysvětlit.
-- ✓ Sebevědomě, ale bez strašení.
-- ✕ Žádné superlativy a prázdné fráze.
-- ✕ Nikdy neslibovat, co nejde ověřit.
+Zaoblení 8 / 12 / 16 px. Jedno akcentové tlačítko na obrazovku.

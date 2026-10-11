@@ -1,0 +1,132 @@
+---
+// Ukázka protokolu z prověrky – konkrétní a srozumitelné místo ilustrace.
+const rows = [
+  { area: 'Historie a nájezd', note: 'Sedí, 6 servisních záznamů', ok: true },
+  { area: 'Lak a karoserie', note: '2 díly přelakované (dveře PZ, blatník PP)', ok: false },
+  { area: 'Diagnostika', note: '1 uložená chyba: snímač NOx', ok: false },
+  { area: 'Motor a převodovka', note: 'Bez nálezu', ok: true },
+  { area: 'Podvozek a brzdy', note: 'Přední kotouče na výměnu', ok: false },
+  { area: 'Zkušební jízda', note: 'Bez nálezu', ok: true },
+];
+---
+
+<figure class="report" aria-label="Ukázka protokolu z prověrky">
+  <header class="report__head">
+    <span class="report__tag">Ukázka protokolu</span>
+    <p class="report__car">Škoda Octavia Combi 2.0 TDI</p>
+    <p class="report__meta">2018 · 148 200 km · nafta · automat</p>
+  </header>
+  <ul class="report__rows">
+    {rows.map((r, i) => (
+      <li style={`--i:${i}`}>
+        <span class="report__area">{r.area}</span>
+        <span class="report__note">{r.note}</span>
+        <span class:list={['status', r.ok ? 'status--ok' : 'status--warn']}>{r.ok ? 'OK' : 'Pozor'}</span>
+      </li>
+    ))}
+  </ul>
+  <footer class="report__verdict">
+    <span>Doporučení</span>
+    <strong>Koupit, se slevou za nálezy</strong>
+  </footer>
+</figure>
+
+<style>
+  .report {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    font-size: 0.94rem;
+  }
+  .report__head {
+    padding: 1.25rem 1.4rem 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .report__tag {
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .report__car {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+  }
+  .report__meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .report__rows {
+    list-style: none;
+    padding: 0;
+  }
+  .report__rows li {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr auto;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding: 0.8rem 1.4rem;
+    border-bottom: 1px solid var(--line);
+    animation: row-in 0.5s var(--ease) both;
+    animation-delay: calc(var(--i) * 120ms + 300ms);
+  }
+  .report__area {
+    font-weight: 600;
+  }
+  .report__note {
+    color: var(--ink-2);
+  }
+  .status {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+  }
+  .status--ok {
+    color: var(--ok);
+    background: var(--ok-soft);
+  }
+  .status--warn {
+    color: var(--warn);
+    background: var(--warn-soft);
+  }
+  .report__verdict {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1rem 1.4rem;
+    background: var(--ink);
+    color: #fff;
+  }
+  .report__verdict span {
+    color: #b9bdc3;
+    font-size: 0.88rem;
+  }
+  @keyframes row-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  @media (max-width: 520px) {
+    .report__rows li {
+      grid-template-columns: 1fr auto;
+    }
+    .report__note {
+      grid-column: 1;
+      grid-row: 2;
+      font-size: 0.88rem;
+    }
+    .status {
+      grid-row: 1;
+      grid-column: 2;
+    }
+  }
+</style>

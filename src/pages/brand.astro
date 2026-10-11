@@ -6,306 +6,232 @@ import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 
 const colors = [
-  { name: 'Signál', hex: '#FF5A1F', role: 'Primární akce, zvýraznění, značka', fg: '#fff' },
-  { name: 'Asfalt', hex: '#101828', role: 'Text, tmavé plochy, logo', fg: '#fff' },
-  { name: 'Kontrola', hex: '#17C98A', role: 'Úspěch, „v pořádku“, fajfka', fg: '#101828' },
-  { name: 'Noc', hex: '#0B1220', role: 'Tmavé sekce, patička', fg: '#fff' },
-  { name: 'Křída', hex: '#F7F5F0', role: 'Pozadí stránky', fg: '#101828' },
-  { name: 'Jantar', hex: '#FFB020', role: 'Doplňková, přechody', fg: '#101828' },
+  { name: 'Asfalt', hex: '#16181B', role: 'Text, tmavé plochy, logo', fg: '#fff' },
+  { name: 'Papír', hex: '#F7F6F3', role: 'Pozadí stránky', fg: '#16181B' },
+  { name: 'Bílá', hex: '#FFFFFF', role: 'Karty, formuláře', fg: '#16181B' },
+  { name: 'Linka', hex: '#E3E1DC', role: 'Oddělovače, rámečky', fg: '#16181B' },
+  { name: 'Signál', hex: '#E0531F', role: 'Jediný akcent: hlavní tlačítko, logo', fg: '#fff' },
+  { name: 'OK / Pozor', hex: '#1E8A5A · #B7791F', role: 'Jen stavy v protokolu', fg: '#fff', split: true },
 ];
-const icons = [
-  'search', 'history', 'layers', 'cpu', 'wrench', 'disc', 'seat', 'steering', 'file', 'shield', 'car', 'camera',
-  'tag', 'link', 'clock', 'gauge', 'alert', 'wallet', 'user', 'route', 'key', 'pin', 'phone', 'mail',
-];
-const voice = [
-  { ok: true, text: 'Krátce a jasně. „Tohle auto nekupujte.“' },
-  { ok: true, text: 'Lidskou řečí, technické pojmy vysvětlit.' },
-  { ok: true, text: 'Sebevědomě, ale bez strašení.' },
-  { ok: false, text: 'Žádné superlativy a prázdné fráze.' },
-  { ok: false, text: 'Žádná technická hantýrka bez vysvětlení.' },
-  { ok: false, text: 'Nikdy neslibovat, co nejde ověřit.' },
+const icons = ['history', 'layers', 'cpu', 'wrench', 'disc', 'seat', 'steering', 'file', 'phone', 'mail', 'pin', 'check'];
+const rules = [
+  ['Jeden akcent', 'Oranžová jen pro hlavní akci a logo. Nikdy jako plocha nebo přechod.'],
+  ['Linky, ne stíny', 'Oddělujeme tenkou linkou. Bez stínů, rozmazání a přechodů.'],
+  ['Konkrétně', 'Ukazujeme skutečné věci: protokol, ceny, mapu. Žádné ilustrace pro efekt.'],
+  ['Stručně', 'Krátké věty v první osobě. „Přijedu, zkontroluji, zavolám.“'],
+  ['Klidný pohyb', 'Animace jen jemné objevení obsahu. Nic, co poskakuje nebo se točí.'],
+  ['Neslibovat', 'Píšeme jen to, co jde dodržet a ověřit.'],
 ];
 ---
 
-<Base title="Brand manuál | Proklepto" description="Vizuální identita značky Proklepto: logo, barvy, typografie, ikony a tón komunikace." noindex>
-  <section class="section brand">
-    <div class="container">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">Brand manuál v{site.version}</span>
-        <h1 class="h1">Proklepto <span class="hl">identita.</span></h1>
-        <p class="lead">
-          <strong>Proklepto</strong> vychází z „proklepnout“: důkladně prověřit, než se rozhodnete. Značka má působit
-          jako dobrý technik. Přesná, přátelská a na vaší straně.
-        </p>
-      </div>
+<Base title="Brand manuál | Proklepto" description="Vizuální identita značky Proklepto: logo, barvy, písmo, ikony a pravidla." noindex>
+  <section class="container brand">
+    <div class="section-head">
+      <p class="label">Brand manuál · v{site.version}</p>
+      <h1 class="h1">Proklepto</h1>
+      <p class="lead">Z „proklepnout“: důkladně prověřit, než se rozhodnete. Značka má působit jako dobrý technik: věcně, přesně a v klidu.</p>
+    </div>
 
-      <h2 class="h3 b-title">01 · Logo</h2>
-      <div class="b-grid b-grid--logo">
-        <div class="b-tile" data-reveal><Logo size={56} /></div>
-        <div class="b-tile b-tile--dark" data-reveal style="--d:1"><Logo size={56} inverse /></div>
-        <div class="b-tile b-tile--brand" data-reveal style="--d:2"><LogoMark size={120} variant="light" /></div>
-        <div class="b-tile" data-reveal style="--d:3"><LogoMark size={120} /></div>
-      </div>
-      <div class="b-explain" data-reveal>
-        <div class="b-anatomy">
-          <LogoMark size={180} />
-          <span class="b-anatomy__guide" aria-hidden="true"></span>
+    <h2 class="h3 b-title">Logo</h2>
+    <div class="b-logos">
+      <div class="b-tile"><Logo size={44} /></div>
+      <div class="b-tile b-tile--dark"><Logo size={44} inverse /></div>
+      <div class="b-tile"><LogoMark size={96} /></div>
+    </div>
+    <ul class="b-notes">
+      <li>Značka je písmeno „P“: bříško tvoří lupa, nožička její rukojeť. Fajfka v lupě znamená „v pořádku“.</li>
+      <li>Dvě barvy: Asfalt a Signál. Na tmavém pozadí bílý čtverec.</li>
+      <li>Logotyp „proklepto“ malými písmeny, Archivo Bold. Ochranná zóna ¼ šířky značky, minimum 24 px.</li>
+    </ul>
+
+    <h2 class="h3 b-title">Barvy</h2>
+    <div class="b-colors">
+      {colors.map((c) => (
+        <div class="b-color">
+          <div class="b-swatch" style={c.split ? 'background:linear-gradient(90deg,#1E8A5A 50%,#B7791F 50%)' : `background:${c.hex}`}></div>
+          <b>{c.name}</b>
+          <code>{c.hex}</code>
+          <small>{c.role}</small>
         </div>
-        <ul>
-          <li><b>P + lupa.</b> Bříško písmena tvoří lupa, nožička její rukojeť. Značka prověřuje.</li>
-          <li><b>Zelená fajfka</b> uvnitř lupy je výsledek: auto v pořádku.</li>
-          <li><b>Zaoblený čtverec</b> (radius 28 %) nese stejné kulaté tvarosloví jako celý web.</li>
-          <li><b>Ochranná zóna</b> = ¼ šířky značky. Minimální velikost 24 px.</li>
-          <li><b>Logotyp</b> „proklepto“ malými písmeny, Bricolage Grotesque ExtraBold, prostrkání −4 %.</li>
-        </ul>
-      </div>
+      ))}
+    </div>
 
-      <h2 class="h3 b-title">02 · Barvy</h2>
-      <div class="b-colors">
-        {colors.map((c, i) => (
-          <div class="b-color" data-reveal style={`--d:${i % 3}; background:${c.hex}; color:${c.fg}`}>
-            <b>{c.name}</b>
-            <code>{c.hex}</code>
-            <small>{c.role}</small>
-          </div>
-        ))}
+    <h2 class="h3 b-title">Písmo</h2>
+    <div class="b-type">
+      <div class="b-tile b-tile--left">
+        <small>Nadpisy · Archivo 700, šířka 94 %</small>
+        <p class="b-type__display">Prověrka ojetého auta před koupí</p>
       </div>
-      <p class="b-note">Poměr: 60 % Křída / bílá · 25 % Asfalt / Noc · 10 % Signál · 5 % Kontrola. Signál vždy jen pro to nejdůležitější na ploše.</p>
-
-      <h2 class="h3 b-title">03 · Typografie</h2>
-      <div class="b-type">
-        <div class="b-tile b-type__card" data-reveal>
-          <small>Nadpisy · Bricolage Grotesque</small>
-          <p class="b-type__display">Ojetinu nejdřív proklepneme.</p>
-          <code>700–800 · letter-spacing −3,5 % · line-height 1.05</code>
-        </div>
-        <div class="b-tile b-type__card" data-reveal style="--d:1">
-          <small>Text · Inter</small>
-          <p class="b-type__body">Prověříme ojeté auto dřív, než za něj zaplatíte. Odhalíme stočené kilometry, skrytou bouračku i drahé závady.</p>
-          <code>400–650 · 17 px základ · line-height 1.6</code>
-        </div>
-      </div>
-
-      <h2 class="h3 b-title">04 · Ikony</h2>
-      <div class="b-icons">
-        {icons.map((n, i) => (
-          <div class="b-icon" data-reveal style={`--d:${i % 6}`}>
-            <Icon name={n} size={28} />
-            <small>{n}</small>
-          </div>
-        ))}
-      </div>
-      <p class="b-note">Mřížka 24 × 24 px, tah 1,75 px, kulaté konce a spoje. V odznacích 52 px s radiusem 16 px.</p>
-
-      <h2 class="h3 b-title">05 · Prvky</h2>
-      <div class="b-tile b-components" data-reveal>
-        <a class="btn btn--brand" href="#">Objednat prověrku <Icon name="arrow" size={18} class="icon-arrow" /></a>
-        <a class="btn" href="#">Sekundární</a>
-        <a class="btn btn--ghost" href="#">Ghost</a>
-        <span class="eyebrow">Eyebrow</span>
-        <span class="chip"><Icon name="check" size={18} />Chip s fajfkou</span>
-        <span class="icon-badge"><Icon name="shield" size={26} /></span>
-        <span class="icon-badge icon-badge--ok"><Icon name="check" size={26} /></span>
-      </div>
-      <p class="b-note">Zaoblení: 12 / 20 / 28 / 40 px a „pilulka“ pro tlačítka a štítky. Pohyb: ease-out (0.22, 1, 0.36, 1), u hoveru jemná pružina.</p>
-
-      <h2 class="h3 b-title">06 · Tón komunikace</h2>
-      <div class="b-voice">
-        {voice.map((v, i) => (
-          <div class:list={['b-voice__item', { bad: !v.ok }]} data-reveal style={`--d:${i % 3}`}>
-            <span class="b-voice__mark">{v.ok ? '✓' : '✕'}</span>{v.text}
-          </div>
-        ))}
+      <div class="b-tile b-tile--left">
+        <small>Text · Inter 400–600, 17 px</small>
+        <p>Přijedu k autu, které chcete koupit, a zkontroluji ho od historie po podvozek. Ještě ten den víte, jestli ho koupit a za kolik.</p>
       </div>
     </div>
+
+    <h2 class="h3 b-title">Ikony</h2>
+    <div class="b-icons">
+      {icons.map((n) => (
+        <div class="b-icon"><Icon name={n} size={24} /><small>{n}</small></div>
+      ))}
+    </div>
+    <p class="b-caption">Lineární, 24 × 24 px, tah 1,75 px. Barva textu nebo Signál, nikdy v barevném podkladu.</p>
+
+    <h2 class="h3 b-title">Prvky</h2>
+    <div class="b-tile b-tile--left b-components">
+      <a class="btn btn--accent" href="#">Rezervovat termín</a>
+      <a class="btn" href="#">Sekundární</a>
+      <a class="btn btn--ghost" href="#">Obrysové</a>
+      <span class="label">Štítek sekce</span>
+    </div>
+    <p class="b-caption">Zaoblení 8 / 12 / 16 px. Tlačítka 12 px. Jedno akcentové tlačítko na obrazovku.</p>
+
+    <h2 class="h3 b-title">Pravidla</h2>
+    <dl class="b-rules">
+      {rules.map(([k, v]) => (
+        <div>
+          <dt>{k}</dt>
+          <dd>{v}</dd>
+        </div>
+      ))}
+    </dl>
   </section>
 </Base>
 
 <style>
   .brand {
-    padding-top: clamp(32px, 5vw, 64px);
+    padding-block: clamp(40px, 6vw, 72px) var(--section);
   }
   .b-title {
-    margin: 3.5rem 0 1.25rem;
-    font-size: 1.5rem;
-  }
-  .b-grid--logo {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    margin: 3rem 0 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
   }
   .b-tile {
     display: grid;
     place-items: center;
-    min-height: 200px;
-    padding: 2rem;
-    border-radius: var(--r-lg);
+    min-height: 160px;
+    padding: 1.5rem;
     background: var(--surface);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
   }
   .b-tile--dark {
-    background: var(--night);
+    background: var(--dark);
+    border-color: var(--dark);
   }
-  .b-tile--brand {
-    background: var(--brand);
-  }
-  .b-explain {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 2.5rem;
-    align-items: center;
-    margin-top: 1rem;
-    padding: 2rem;
-    border-radius: var(--r-lg);
-    background: var(--surface);
-  }
-  .b-anatomy {
-    position: relative;
-    padding: 45px;
-  }
-  .b-anatomy__guide {
-    position: absolute;
-    inset: 0;
-    border: 1.5px dashed var(--brand);
-    border-radius: 24px;
-  }
-  .b-explain ul {
-    display: grid;
+  .b-tile--left {
+    place-items: start;
+    align-content: start;
     gap: 0.75rem;
-    padding-left: 1.2rem;
-    color: var(--ink-2);
+    min-height: 0;
   }
-  .b-colors {
+  .b-logos {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
   }
+  .b-notes {
+    margin-top: 1rem;
+    padding-left: 1.2rem;
+    color: var(--ink-2);
+    display: grid;
+    gap: 0.35rem;
+  }
+  .b-colors {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem 1rem;
+  }
   .b-color {
     display: grid;
-    gap: 0.25rem;
-    min-height: 170px;
-    align-content: end;
-    padding: 1.4rem;
-    border-radius: var(--r-lg);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid rgb(16 24 40 / 0.06);
+    gap: 0.15rem;
   }
-  .b-color b {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
+  .b-swatch {
+    height: 88px;
+    border-radius: var(--r);
+    border: 1px solid var(--line);
+    margin-bottom: 0.5rem;
   }
+  .b-color code,
   .b-color small {
-    opacity: 0.8;
-  }
-  .b-note {
-    margin-top: 1rem;
     color: var(--muted);
+    font-size: 0.88rem;
   }
   .b-type {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
-  .b-type__card {
-    place-items: start;
-    align-content: space-between;
-    gap: 1rem;
-  }
-  .b-type__card small,
-  .b-type__card code {
+  .b-type small {
     color: var(--muted);
   }
   .b-type__display {
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.05;
-    letter-spacing: -0.04em;
-  }
-  .b-type__body {
-    font-size: 1.15rem;
+    font-weight: 700;
+    font-stretch: 94%;
+    font-size: 2.2rem;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
   }
   .b-icons {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(6, 1fr);
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
   }
   .b-icon {
     display: grid;
     justify-items: center;
-    gap: 0.6rem;
-    padding: 1.25rem 0.5rem;
-    border-radius: var(--r);
+    gap: 0.4rem;
+    padding: 1.1rem 0.5rem;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
     background: var(--surface);
-    color: var(--ink);
-    transition:
-      color 0.2s,
-      transform 0.4s var(--ease-spring);
-  }
-  .b-icon:hover {
-    color: var(--brand);
-    transform: translateY(-4px);
   }
   .b-icon small {
     color: var(--muted);
-    font-size: 0.78rem;
+    font-size: 0.75rem;
+  }
+  .b-caption {
+    margin-top: 0.75rem;
+    color: var(--muted);
+    font-size: 0.95rem;
   }
   .b-components {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
     align-items: center;
-    justify-content: flex-start;
-    min-height: 0;
+    gap: 0.75rem;
   }
-  .b-voice {
+  .b-rules {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
+    gap: 1.5rem 2rem;
   }
-  .b-voice__item {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    padding: 1.1rem 1.25rem;
-    border-radius: var(--r);
-    background: var(--ok-50);
+  .b-rules dt {
+    font-weight: 650;
   }
-  .b-voice__item.bad {
-    background: var(--brand-50);
+  .b-rules dd {
+    margin: 0.2rem 0 0;
+    color: var(--muted);
   }
-  .b-voice__mark {
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--ok);
-    color: #fff;
-    font-weight: 700;
-  }
-  .bad .b-voice__mark {
-    background: var(--brand);
-  }
-  @media (max-width: 860px) {
-    .b-grid--logo,
+  @media (max-width: 760px) {
+    .b-logos,
     .b-colors,
-    .b-voice {
+    .b-rules {
       grid-template-columns: 1fr 1fr;
     }
-    .b-type,
-    .b-explain {
+    .b-type {
       grid-template-columns: 1fr;
     }
-    .b-anatomy {
-      justify-self: center;
+    .b-icons {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
-  @media (max-width: 480px) {
-    .b-grid--logo,
+  @media (max-width: 460px) {
+    .b-logos,
     .b-colors,
-    .b-voice {
+    .b-rules {
       grid-template-columns: 1fr;
     }
   }

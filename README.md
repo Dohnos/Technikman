@@ -1,4 +1,4 @@
-# Proklepto · v1.0.1
+# Proklepto · v1.1.0
 
 Web nezávislého technika pro **prověrku ojetých aut** – Olomoucký kraj a celá Morava.
 
@@ -6,8 +6,9 @@ Web nezávislého technika pro **prověrku ojetých aut** – Olomoucký kraj a 
 
 - **[Astro](https://astro.build)**: statické HTML, téměř žádný JavaScript. Výsledek je rychlý web, který Google snadno indexuje.
 - Čisté CSS s design tokeny (`src/styles/global.css`), CSS je vložené přímo do HTML.
-- Self-hostované variabilní fonty (Bricolage Grotesque + Inter) s preloadem.
-- Animace: CSS + jeden malý `IntersectionObserver` (scroll reveal). Respektuje `prefers-reduced-motion`.
+- Self-hostované variabilní fonty (Archivo + Inter) s preloadem.
+- Animace: jen jemné objevení obsahu při scrollu. Respektuje `prefers-reduced-motion`.
+- Rezervace termínu: vestavěný kalendář (`src/components/Booking.astro`), viz níže.
 
 ## SEO
 
@@ -20,12 +21,30 @@ Web nezávislého technika pro **prověrku ojetých aut** – Olomoucký kraj a 
 
 | Co | Kde |
 | --- | --- |
-| Telefon, e-mail, otevírací doba, ceny, doprava | `src/data/site.ts` |
-| Co kontrolujeme, kroky, FAQ, značky | `src/data/site.ts` |
+| Telefon, e-mail, otevírací doba, služby a ceny, doprava | `src/data/site.ts` |
+| Co kontroluji, postup, FAQ | `src/data/site.ts` |
+| Rezervace: dny, časy, dovolená, obsazené termíny | `src/data/booking.ts` |
 | Města a jejich texty | `src/data/regions.ts` |
 | Doména | `astro.config.mjs` (`SITE`) + `src/data/site.ts` |
 
-> ⚠️ **Před spuštěním doplňte skutečný telefon** (`site.phone`, `site.phoneHref`) a ověřte e-mail, ceny a sliby (např. „termín do 48 h“, „120+ bodů“).
+> ⚠️ **Před spuštěním doplňte skutečný telefon** (`site.phone`, `site.phoneHref`) a ověřte e-mail, ceny a sliby (např. „potvrdím do 2 hodin“, „protokol týž den“).
+
+## Rezervace termínu
+
+Kalendář na webu ukazuje volné dny a časy podle pravidel v `src/data/booking.ts`:
+
+- `workdays`: pracovní dny (Po–So), `slots`: časy začátku (zvlášť pro sobotu).
+- `daysAhead`: kolik dní dopředu (30), `minNoticeHours`: minimální předstih (16 h).
+- České státní svátky (včetně Velikonoc) se vynechávají automaticky.
+- `closed`: dovolená, např. `'2026-12-31'`. `taken`: ručně obsazené termíny, např. `'2026-10-20 10:30'`.
+
+**Jak se rezervace odešle:**
+- Když je `endpoint` prázdný, otevře se zákazníkovi e-mail s vyplněnou rezervací (na `site.email`).
+- Pro odesílání bez e-mailového klienta stačí vložit URL formulářové služby do `endpoint`, třeba [Formspree](https://formspree.io) nebo [Web3Forms](https://web3forms.com). Rezervace pak chodí rovnou do e-mailu.
+
+**Externí kalendář později:** v `booking.ts` nastavte `provider: 'embed'` a do `embedUrl` vložte odkaz pro vložení (Reservio, Cal.com, Calendly…). Místo vestavěného kalendáře se zobrazí ten externí, se skutečnou obsazeností.
+
+> Vestavěný kalendář nezná skutečnou obsazenost. Je to žádost o termín, proto web výslovně říká, že termín potvrdíte telefonicky.
 
 ## Vývoj
 
@@ -63,8 +82,8 @@ Doménu nastavte v `astro.config.mjs` (`SITE`) a v `src/data/site.ts`. Na GitHub
 
 ```
 src/
-  components/   Hero, HeroScene (animovaná ilustrace), Checks, Process, Pricing, Coverage (mapa), Faq, Contact…
-  data/         site.ts, regions.ts – veškerý obsah
+  components/   Hero, Report (ukázka protokolu), Services, Checks, Process, Booking (kalendář), Coverage (mapa), Faq…
+  data/         site.ts, regions.ts, booking.ts – veškerý obsah
   layouts/      Base.astro – SEO hlavička, JSON-LD, scroll reveal
   pages/        index, proverka-auta/[slug], proverka-auta/index, brand, 404
   styles/       global.css – design tokeny

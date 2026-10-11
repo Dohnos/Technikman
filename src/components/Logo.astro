@@ -6,7 +6,7 @@ interface Props {
   inverse?: boolean;
   size?: number;
 }
-const { href = withBase('/'), inverse = false, size = 40 } = Astro.props;
+const { href = withBase('/'), inverse = false, size = 34 } = Astro.props;
 ---
 
 <a href={href} class:list={['logo', { 'logo--inverse': inverse }]} aria-label="Proklepto – úvodní stránka">
@@ -18,7 +18,7 @@ const { href = withBase('/'), inverse = false, size = 40 } = Astro.props;
   .logo {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.55rem;
     text-decoration: none;
     color: var(--ink);
   }
@@ -27,21 +27,10 @@ const { href = withBase('/'), inverse = false, size = 40 } = Astro.props;
   }
   .logo__word {
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 1.45rem;
-    letter-spacing: -0.04em;
+    font-weight: 750;
+    font-stretch: 94%;
+    font-size: 1.35rem;
+    letter-spacing: -0.03em;
     line-height: 1;
-  }
-  .logo :global(.logo-tick) {
-    stroke-dasharray: 20;
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 0.5s var(--ease-out);
-  }
-  .logo:hover :global(.logo-tick) {
-    animation: tick-draw 0.7s var(--ease-out);
-  }
-  @keyframes tick-draw {
-    from { stroke-dashoffset: 20; }
-    to { stroke-dashoffset: 0; }
   }
 </style>

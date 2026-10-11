@@ -1,6 +1,5 @@
 ---
 import { withBase } from '../lib/paths';
-import Icon from './Icon.astro';
 import { cities, regions, pageCities } from '../data/regions';
 import { site } from '../data/site';
 
@@ -19,237 +18,150 @@ const project = (lat: number, lon: number) => ({
 const base = project(site.baseGeo.lat, site.baseGeo.lon);
 const pxPerKm = K / 111;
 const rings = [25, 50, 100];
-
 const dots = cities.map((c) => ({ ...c, ...project(c.lat, c.lon), main: c.region === regions.olomoucky }));
+const grouped = Object.values(regions).map((r) => ({ region: r, cities: pageCities.filter((c) => c.region === r) }));
 ---
 
-<section class="section coverage" id="kde-pusobime">
-  <div class="container coverage__grid">
-    <div class="coverage__copy" data-reveal="left">
-      <span class="eyebrow">Kde působíme</span>
-      <h2 class="h2">Doma v <span class="hl">Olomouckém kraji.</span> Jezdíme po celé Moravě.</h2>
-      <p class="lead">
-        Základnu máme v Olomouci. Pravidelně vyjíždíme do Jihomoravského, Zlínského i Moravskoslezského kraje. Po domluvě kamkoli v Česku.
-      </p>
-      <ul class="regions">
-        {Object.values(regions).map((r, i) => (
-          <li class:list={{ main: i === 0 }}>
-            <Icon name="pin" size={18} />{r}
-          </li>
+<section class="section" id="kde-jezdim">
+  <div class="container coverage">
+    <div>
+      <div class="section-head">
+        <p class="label">Kde jezdím</p>
+        <h2 class="h2">Olomoucký kraj a celá Morava</h2>
+        <p class="lead">Základnu mám v Olomouci. Do {site.freeRadiusKm} km jezdím zdarma, dál za {site.pricePerKm} Kč/km.</p>
+      </div>
+      <div class="regions">
+        {grouped.map((g) => g.cities.length > 0 && (
+          <div class="region">
+            <h3>{g.region}</h3>
+            <ul>
+              {g.cities.map((c) => (
+                <li><a href={withBase(`/proverka-auta/${c.slug}/`)} aria-current={c.slug === active ? 'page' : undefined}>{c.name}</a></li>
+              ))}
+            </ul>
+          </div>
         ))}
-      </ul>
-      <nav class="city-links" aria-label="Prověrka auta ve městech">
-        {pageCities.map((c) => (
-          <a href={withBase(`/proverka-auta/${c.slug}/`)} class:list={{ active: c.slug === active }}>
-            {c.name}
-          </a>
-        ))}
-      </nav>
+      </div>
     </div>
 
-    <div class="map" data-reveal="zoom" data-scene>
-      <svg viewBox="0 0 460 440" role="img" aria-label="Mapa působnosti Proklepto s centrem v Olomouci">
-        <defs>
-          <radialGradient id="sweep" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform={`translate(${base.x} ${base.y}) scale(280)`}>
-            <stop offset="0" stop-color="#FF5A1F" stop-opacity=".35"></stop>
-            <stop offset="1" stop-color="#FF5A1F" stop-opacity="0"></stop>
-          </radialGradient>
-        </defs>
-        <rect width="460" height="440" rx="36" fill="#0B1220"></rect>
-        <g stroke="#fff" stroke-opacity=".05">
-          {Array.from({ length: 11 }, (_, i) => <path d={`M${i * 46} 0v440M0 ${i * 44}h460`}></path>)}
-        </g>
+    <figure class="map" data-reveal>
+      <svg viewBox="0 0 460 440" role="img" aria-label="Mapa míst, kam jezdím, s centrem v Olomouci">
+        <rect width="460" height="440" fill="#FFFFFF"></rect>
         {rings.map((km) => (
           <g>
-            <circle cx={base.x} cy={base.y} r={km * pxPerKm} fill="none" stroke="#fff" stroke-opacity=".12" stroke-dasharray="4 6"></circle>
-            <text x={base.x + 6} y={base.y - km * pxPerKm - 6} fill="#fff" fill-opacity=".4" font-size="11">{km} km</text>
+            <circle cx={base.x} cy={base.y} r={km * pxPerKm} fill="none" stroke="#D2CFC8" stroke-dasharray="3 5"></circle>
+            <text x={base.x + 5} y={base.y - km * pxPerKm - 5} fill="#8A8E94" font-size="11">{km} km</text>
           </g>
         ))}
-        <circle cx={base.x} cy={base.y} r={25 * pxPerKm} fill="#FF5A1F" fill-opacity=".1"></circle>
-        <g class="map__sweep" style={`transform-origin:${base.x}px ${base.y}px`}>
-          <path d={`M${base.x} ${base.y}L${base.x + 280} ${base.y}A280 280 0 0 0 ${base.x + 280 * Math.cos(-0.7)} ${base.y + 280 * Math.sin(-0.7)}Z`} fill="url(#sweep)"></path>
-        </g>
+        <circle cx={base.x} cy={base.y} r={site.freeRadiusKm * pxPerKm} fill="#E0531F" fill-opacity=".07"></circle>
         {dots.filter((d) => d.slug !== 'olomouc').map((d) => (
-          <path d={`M${base.x} ${base.y}L${d.x} ${d.y}`} stroke={d.main ? '#FF5A1F' : '#17C98A'} stroke-opacity=".28" stroke-width="1.5" class="map__route"></path>
+          <path d={`M${base.x} ${base.y}L${d.x} ${d.y}`} stroke="#D2CFC8" stroke-width="1"></path>
         ))}
-        {dots.map((d, i) => {
+        {dots.map((d) => {
           const isBase = d.slug === 'olomouc';
           const right = d.x < 360 && !['prostejov', 'litovel'].includes(d.slug);
-          const label = (
-            <text x={right ? d.x + 12 : d.x - 12} y={d.y + 4} text-anchor={right ? 'start' : 'end'} fill="#fff" fill-opacity={isBase || d.page ? 0.95 : 0.55} font-size={isBase ? 15 : 12} font-weight={isBase ? 700 : 550}>
-              {d.name}
-            </text>
-          );
           const dot = (
-            <g class="map__dot" style={`--i:${i}`}>
-              {isBase && <circle class="map__pulse" cx={d.x} cy={d.y} r="10" fill="#FF5A1F"></circle>}
-              <circle cx={d.x} cy={d.y} r={isBase ? 8 : d.page ? 5 : 3.5} fill={isBase ? '#FF5A1F' : d.main ? '#FF8A5C' : '#17C98A'} stroke={d.slug === active ? '#fff' : 'none'} stroke-width="2.5"></circle>
-              {label}
+            <g>
+              <circle cx={d.x} cy={d.y} r={isBase ? 7 : d.page ? 4.5 : 3} fill={isBase ? '#E0531F' : d.main ? '#16181B' : '#8A8E94'} stroke={d.slug === active ? '#E0531F' : 'none'} stroke-width="3"></circle>
+              <text x={right ? d.x + 10 : d.x - 10} y={d.y + 4} text-anchor={right ? 'start' : 'end'} fill={d.page || isBase ? '#16181B' : '#8A8E94'} font-size={isBase ? 14 : 12} font-weight={isBase ? 700 : d.page ? 600 : 400}>{d.name}</text>
             </g>
           );
           return d.page ? <a href={withBase(`/proverka-auta/${d.slug}/`)} aria-label={`Prověrka auta ${d.locative}`}>{dot}</a> : dot;
         })}
       </svg>
-      <div class="map__legend">
-        <span><i style="background:#FF8A5C"></i>Olomoucký kraj</span>
-        <span><i style="background:#17C98A"></i>Další kraje</span>
-      </div>
-    </div>
+      <figcaption>
+        <span><i class="k-base"></i>Základna</span>
+        <span><i class="k-main"></i>Olomoucký kraj</span>
+        <span><i class="k-other"></i>Další kraje</span>
+      </figcaption>
+    </figure>
   </div>
 </section>
 
 <style>
-  .coverage__grid {
+  .coverage {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: clamp(2rem, 5vw, 4.5rem);
-    align-items: center;
-  }
-  .coverage__copy {
-    display: grid;
-    gap: 1.25rem;
-    justify-items: start;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
   }
   .regions {
-    list-style: none;
-    padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.5rem;
-    width: 100%;
+    gap: 1.1rem;
   }
-  .regions li {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 0.9rem;
-    border-radius: var(--r-sm);
-    background: var(--surface);
-    font-weight: 550;
-    font-size: 0.95rem;
-    box-shadow: var(--shadow-sm);
+  .region {
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
   }
-  .regions .icon {
-    color: var(--ok);
-    flex-shrink: 0;
+  .region h3 {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-stretch: 100%;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+    letter-spacing: 0;
   }
-  .regions li.main {
-    background: var(--ink);
-    color: #fff;
-  }
-  .regions li.main .icon {
-    color: var(--brand);
-  }
-  .city-links {
+  .region ul {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.25rem 0.9rem;
+    list-style: none;
+    padding: 0;
   }
-  .city-links a {
-    padding: 0.4rem 0.8rem;
-    border-radius: var(--pill);
-    border: 1.5px solid var(--line);
-    text-decoration: none;
-    font-size: 0.9rem;
+  .region a {
     font-weight: 550;
-    color: var(--ink-2);
-    transition:
-      border-color 0.2s,
-      background-color 0.2s,
-      color 0.2s;
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-2);
   }
-  .city-links a:hover,
-  .city-links a.active {
-    border-color: var(--brand);
-    background: var(--brand);
-    color: #fff;
+  .region a:hover,
+  .region a[aria-current='page'] {
+    color: var(--accent-ink);
+    border-bottom-color: currentColor;
   }
   .map {
-    position: relative;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: #fff;
   }
   .map svg {
     width: 100%;
     height: auto;
-    border-radius: var(--r-xl);
-    box-shadow: var(--shadow-lg);
-  }
-  .map a {
-    cursor: pointer;
   }
   .map a:hover text {
-    fill: #ff8a5c;
-    fill-opacity: 1;
+    fill: var(--accent-ink);
   }
-  .map__sweep {
-    animation: spin 5s linear infinite;
-  }
-  @keyframes spin {
-    to {
-      transform: rotate(-360deg);
-    }
-  }
-  .map__pulse {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: pulse 2s ease-out infinite;
-  }
-  @keyframes pulse {
-    from {
-      transform: scale(1);
-      opacity: 0.6;
-    }
-    to {
-      transform: scale(3.2);
-      opacity: 0;
-    }
-  }
-  .map__route {
-    stroke-dasharray: 400;
-    stroke-dashoffset: 400;
-    transition: stroke-dashoffset 2s var(--ease-out);
-  }
-  .map.seen .map__route,
-  :global(html:not(.js)) .map__route {
-    stroke-dashoffset: 0;
-  }
-  .map__dot {
-    opacity: 0;
-    transition: opacity 0.6s var(--ease-out);
-    transition-delay: calc(var(--i) * 70ms + 300ms);
-  }
-  .map.seen .map__dot,
-  :global(html:not(.js)) .map__dot {
-    opacity: 1;
-  }
-  .map:not(.in-view) * {
-    animation-play-state: paused;
-  }
-  .map__legend {
-    position: absolute;
-    left: 1.25rem;
-    bottom: 1.1rem;
+  .map figcaption {
     display: flex;
-    gap: 1rem;
-    font-size: 0.8rem;
-    color: #cfd6e4;
+    flex-wrap: wrap;
+    gap: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.85rem;
+    color: var(--muted);
   }
-  .map__legend span {
+  .map figcaption span {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
   }
-  .map__legend i {
+  .map figcaption i {
     width: 9px;
     height: 9px;
     border-radius: 50%;
   }
-  @media (max-width: 960px) {
-    .coverage__grid {
-      grid-template-columns: 1fr;
-    }
+  .k-base {
+    background: var(--accent);
   }
-  @media (max-width: 420px) {
-    .regions {
+  .k-main {
+    background: var(--ink);
+  }
+  .k-other {
+    background: #8a8e94;
+  }
+  @media (max-width: 900px) {
+    .coverage {
       grid-template-columns: 1fr;
     }
   }

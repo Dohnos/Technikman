@@ -1,149 +1,62 @@
 ---
-import Icon from './Icon.astro';
 import { steps } from '../data/site';
 ---
 
-<section class="section process" id="jak-to-funguje">
+<section class="section" id="jak-to-probiha">
   <div class="container">
-    <div class="section-head section-head--center" data-reveal>
-      <span class="eyebrow">Jak to funguje</span>
-      <h2 class="h2">Čtyři kroky k <span class="hl">jistotě.</span></h2>
-      <p class="lead">Vy pošlete odkaz. O zbytek se postaráme, klidně i bez vaší účasti.</p>
+    <div class="section-head">
+      <p class="label">Jak to probíhá</p>
+      <h2 class="h2">Od inzerátu k rozhodnutí za jeden den</h2>
     </div>
-    <div class="steps-wrap" data-scene>
-      <div class="steps__line" aria-hidden="true"><span></span></div>
-      <ol class="steps">
+    <ol class="steps">
       {steps.map((s, i) => (
-        <li class="step" data-reveal style={`--d:${i}`}>
-          <div class="step__icon">
-            <Icon name={s.icon} size={28} />
-            <span class="step__n">{i + 1}</span>
-          </div>
+        <li data-reveal style={`--d:${i}`}>
+          <span class="steps__n">{i + 1}</span>
           <h3 class="h3">{s.title}</h3>
           <p>{s.text}</p>
         </li>
       ))}
-      </ol>
-    </div>
+    </ol>
   </div>
 </section>
 
 <style>
-  .steps-wrap {
-    position: relative;
-  }
   .steps {
     list-style: none;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
+    gap: 2rem;
   }
-  .steps__line {
-    position: absolute;
-    top: 40px;
-    left: 12.5%;
-    right: 12.5%;
-    height: 4px;
-    border-radius: 4px;
-    background: var(--line);
-    overflow: hidden;
-  }
-  .steps__line span {
-    display: block;
-    height: 100%;
-    background: linear-gradient(90deg, var(--brand), var(--ok));
-    transform-origin: 0 50%;
-    transform: scaleX(0);
-    transition: transform 2.2s var(--ease-out) 0.3s;
-  }
-  .steps-wrap.seen .steps__line span,
-  :global(html:not(.js)) .steps__line span {
-    transform: scaleX(1);
-  }
-  .step {
-    position: relative;
+  .steps li {
     display: grid;
-    justify-items: center;
-    text-align: center;
-    gap: 0.9rem;
+    gap: 0.5rem;
+    align-content: start;
+    padding-top: 1.2rem;
+    border-top: 2px solid var(--ink);
   }
-  .step p {
-    color: var(--muted);
-    max-width: 17rem;
+  .steps li:first-child {
+    border-top-color: var(--accent);
   }
-  .step__icon {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 84px;
-    height: 84px;
-    border-radius: 28px;
-    background: var(--surface);
-    color: var(--brand);
-    box-shadow: var(--shadow);
-    border: 4px solid var(--paper);
-    transition: transform 0.5s var(--ease-spring);
-  }
-  .step:hover .step__icon {
-    transform: translateY(-6px) rotate(-6deg);
-  }
-  .step__n {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    display: grid;
-    place-items: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--ink);
-    color: #fff;
+  .steps__n {
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: 0.9rem;
-    border: 3px solid var(--paper);
+    font-size: 0.95rem;
+    color: var(--muted);
   }
-  .step:last-child .step__icon {
-    background: var(--ok);
-    color: #fff;
+  .steps p {
+    color: var(--muted);
+    font-size: 0.97rem;
   }
-  @media (max-width: 860px) {
+  @media (max-width: 900px) {
+    .steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 520px) {
     .steps {
       grid-template-columns: 1fr;
-      gap: 2rem;
-      padding-left: 0;
-    }
-    .steps__line {
-      top: 40px;
-      bottom: 40px;
-      left: 40px;
-      right: auto;
-      width: 4px;
-      height: auto;
-    }
-    .steps__line span {
-      transform-origin: 50% 0;
-      transform: scaleY(0);
-    }
-    .steps-wrap.seen .steps__line span,
-    :global(html:not(.js)) .steps__line span {
-      transform: scaleY(1);
-    }
-    .step {
-      grid-template-columns: 84px 1fr;
-      justify-items: start;
-      text-align: left;
-      column-gap: 1.25rem;
-      row-gap: 0.25rem;
-    }
-    .step__icon {
-      grid-row: span 2;
-    }
-    .step .h3 {
-      align-self: end;
-    }
-    .step p {
-      max-width: none;
+      gap: 1.5rem;
     }
   }
 </style>

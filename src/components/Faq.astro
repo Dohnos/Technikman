@@ -8,21 +8,20 @@ interface Props {
 const { items = faqs } = Astro.props;
 ---
 
-<section class="section section--white faq" id="faq">
-  <div class="container faq__grid">
-    <div class="section-head" data-reveal="left">
-      <span class="eyebrow">Časté otázky</span>
-      <h2 class="h2">Na co se <span class="hl">ptáte.</span></h2>
-      <p class="lead">Nenašli jste odpověď? Zavolejte. Poradíme i s tím, jestli se auto vůbec vyplatí jet prověřit.</p>
+<section class="section section--white" id="otazky">
+  <div class="container faq">
+    <div class="section-head">
+      <p class="label">Otázky</p>
+      <h2 class="h2">Co se často ptáte</h2>
     </div>
     <div class="faq__list">
-      {items.map((f, i) => (
-        <details class="qa" data-reveal style={`--d:${i % 4}`} open={i === 0}>
+      {items.map((f) => (
+        <details class="qa">
           <summary>
             <h3>{f.q}</h3>
-            <span class="qa__icon"><Icon name="plus" size={20} /></span>
+            <Icon name="plus" size={20} class="qa__icon" />
           </summary>
-          <div class="qa__body"><p>{f.a}</p></div>
+          <p>{f.a}</p>
         </details>
       ))}
     </div>
@@ -31,42 +30,23 @@ const { items = faqs } = Astro.props;
 
 <style>
   .faq {
-    border-radius: var(--r-xl);
-  }
-  .faq__grid {
     display: grid;
-    grid-template-columns: 0.8fr 1.2fr;
-    gap: clamp(2rem, 5vw, 4.5rem);
+    grid-template-columns: 0.75fr 1.25fr;
+    gap: clamp(2rem, 5vw, 4rem);
     align-items: start;
   }
-  .faq .section-head {
-    position: sticky;
-    top: 120px;
-  }
   .faq__list {
-    display: grid;
-    gap: 0.75rem;
+    border-top: 1px solid var(--line);
   }
   .qa {
-    border-radius: var(--r);
-    background: var(--paper);
-    border: 1px solid transparent;
-    transition:
-      background-color 0.3s,
-      border-color 0.3s,
-      box-shadow 0.3s;
-  }
-  .qa[open] {
-    background: var(--surface);
-    border-color: var(--line);
-    box-shadow: var(--shadow);
+    border-bottom: 1px solid var(--line);
   }
   .qa summary {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
-    padding: 1.2rem 1.4rem;
+    padding: 1.1rem 0;
     cursor: pointer;
     list-style: none;
   }
@@ -75,51 +55,31 @@ const { items = faqs } = Astro.props;
   }
   .qa h3 {
     font-family: var(--font-body);
-    font-size: 1.06rem;
-    font-weight: 650;
-    letter-spacing: -0.01em;
-    line-height: 1.35;
+    font-size: 1.04rem;
+    font-weight: 600;
+    font-stretch: 100%;
+    letter-spacing: 0;
+    line-height: 1.4;
   }
-  .qa__icon {
-    display: grid;
-    place-items: center;
+  .qa summary:hover h3 {
+    color: var(--accent-ink);
+  }
+  .qa :global(.qa__icon) {
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--surface);
-    color: var(--ink);
-    box-shadow: var(--shadow-sm);
-    transition:
-      transform 0.45s var(--ease-spring),
-      background-color 0.3s,
-      color 0.3s;
+    transition: transform 0.25s var(--ease);
   }
-  .qa[open] .qa__icon {
+  .qa[open] :global(.qa__icon) {
     transform: rotate(45deg);
-    background: var(--brand);
-    color: #fff;
   }
-  .qa__body {
-    padding: 0 1.4rem 1.3rem;
+  .qa p {
+    padding-bottom: 1.2rem;
     color: var(--muted);
+    max-width: 40rem;
   }
-  .qa[open] .qa__body {
-    animation: qa-in 0.45s var(--ease-out);
-  }
-  @keyframes qa-in {
-    from {
-      opacity: 0;
-      transform: translateY(-6px);
-    }
-  }
-  @media (max-width: 960px) {
-    .faq__grid {
+  @media (max-width: 900px) {
+    .faq {
       grid-template-columns: 1fr;
-    }
-    .faq .section-head {
-      position: static;
-      margin-bottom: 0;
+      gap: 0;
     }
   }
 </style>

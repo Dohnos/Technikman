@@ -1,13 +1,13 @@
 ---
 import { withBase, absUrl } from '../../lib/paths';
 import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Coverage from '../../components/Coverage.astro';
-import Contact from '../../components/Contact.astro';
-import Icon from '../../components/Icon.astro';
+import Booking from '../../components/Booking.astro';
 import { pageCities, regions, travelPrice } from '../../data/regions';
 import { site, formatPrice } from '../../data/site';
 
-const siteUrl = (Astro.site ?? new URL(site.url)).href;
+const origin = Astro.site ?? new URL(site.url);
 const grouped = Object.values(regions).map((r) => ({ region: r, cities: pageCities.filter((c) => c.region === r) }));
 
 const schema = [
@@ -15,8 +15,8 @@ const schema = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Proklepto', item: absUrl('/', siteUrl) },
-      { '@type': 'ListItem', position: 2, name: 'Prověrka auta', item: absUrl('/proverka-auta/', siteUrl) },
+      { '@type': 'ListItem', position: 1, name: 'Proklepto', item: absUrl('/', origin) },
+      { '@type': 'ListItem', position: 2, name: 'Prověrka auta', item: absUrl('/proverka-auta/', origin) },
     ],
   },
 ];
@@ -24,95 +24,80 @@ const schema = [
 
 <Base
   title="Prověrka ojetého auta podle města | Proklepto"
-  description="Nezávislá prověrka ojetého auta v Olomouci, Prostějově, Přerově, Šumperku, Brně, Zlíně, Ostravě a dalších městech na Moravě. Vyberte své město."
+  description="Prověrka ojetého auta v Olomouci, Prostějově, Přerově, Šumperku, Brně, Zlíně, Ostravě a dalších městech na Moravě. Cena dopravy podle města."
   schema={schema}
 >
-  <section class="section hub">
-    <div class="container">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">Prověrka auta podle města</span>
-        <h1 class="h1">Kam za vámi <span class="hl">přijedeme.</span></h1>
-        <p class="lead">Základna v Olomouci, výjezdy po celé Moravě. Vyberte město a podívejte se na cenu dopravy.</p>
-      </div>
-      {grouped.map((g) => g.cities.length > 0 && (
-        <div class="hub__group">
-          <h2 class="h3">{g.region}</h2>
-          <div class="hub__grid">
-            {g.cities.map((c, i) => {
-              const t = travelPrice(c.distanceKm, site.freeRadiusKm, site.pricePerKm);
-              return (
-                <a class="hub__card" href={withBase(`/proverka-auta/${c.slug}/`)} data-reveal style={`--d:${i % 4}`}>
-                  <span class="icon-badge"><Icon name="pin" size={24} /></span>
-                  <span class="hub__name">{c.name}</span>
-                  <span class="hub__meta">{c.distanceKm === 0 ? 'Základna' : `cca ${c.distanceKm} km`} · doprava {t === 0 ? 'zdarma' : formatPrice(t)}</span>
-                  <Icon name="arrow" size={20} class="hub__arrow" />
-                </a>
-              );
-            })}
-          </div>
-        </div>
-      ))}
+  <Breadcrumbs items={[{ name: 'Prověrka auta' }]} />
+  <section class="container hub">
+    <div class="section-head">
+      <p class="label">Prověrka auta podle města</p>
+      <h1 class="h1">Kam jezdím</h1>
+      <p class="lead">Základna je v Olomouci. U každého města vidíte vzdálenost a cenu dopravy.</p>
     </div>
+    {grouped.map((g) => g.cities.length > 0 && (
+      <div class="hub__group">
+        <h2 class="h3">{g.region}</h2>
+        <ul class="hub__list">
+          {g.cities.map((c) => {
+            const t = travelPrice(c.distanceKm, site.freeRadiusKm, site.pricePerKm);
+            return (
+              <li>
+                <a href={withBase(`/proverka-auta/${c.slug}/`)}>
+                  <span class="hub__name">{c.name}</span>
+                  <span class="hub__meta">{c.distanceKm === 0 ? 'základna' : `${c.distanceKm} km`}</span>
+                  <span class="hub__meta">{t === 0 ? 'doprava zdarma' : `doprava ${formatPrice(t)}`}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ))}
   </section>
   <Coverage />
-  <Contact />
+  <Booking />
 </Base>
 
 <style>
   .hub {
-    padding-top: clamp(32px, 5vw, 64px);
+    padding-block: clamp(32px, 5vw, 56px) var(--section);
   }
   .hub__group {
-    margin-top: 2.5rem;
+    margin-top: 2rem;
   }
   .hub__group h2 {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
-  .hub__grid {
+  .hub__list {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .hub__list a {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: 1fr 8rem 10rem;
     gap: 1rem;
-  }
-  .hub__card {
-    position: relative;
-    display: grid;
-    gap: 0.6rem;
-    padding: 1.4rem;
-    border-radius: var(--r-lg);
-    background: var(--surface);
-    box-shadow: var(--shadow-sm);
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
     text-decoration: none;
-    transition:
-      transform 0.5s var(--ease-spring),
-      box-shadow 0.5s var(--ease-out);
   }
-  .hub__card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow);
-  }
-  .hub__card:hover .icon-badge {
-    background: var(--brand);
-    color: #fff;
-    transform: rotate(-8deg);
+  .hub__list a:hover .hub__name {
+    color: var(--accent-ink);
+    text-decoration: underline;
   }
   .hub__name {
-    font-family: var(--font-display);
-    font-weight: 750;
-    font-size: 1.4rem;
-    letter-spacing: -0.03em;
+    font-weight: 600;
   }
   .hub__meta {
     color: var(--muted);
-    font-size: 0.92rem;
+    text-align: right;
   }
-  .hub__card :global(.hub__arrow) {
-    position: absolute;
-    top: 1.6rem;
-    right: 1.4rem;
-    color: var(--brand);
-    transition: transform 0.4s var(--ease-spring);
-  }
-  .hub__card:hover :global(.hub__arrow) {
-    transform: translateX(4px);
+  @media (max-width: 560px) {
+    .hub__list a {
+      grid-template-columns: 1fr auto;
+    }
+    .hub__list a .hub__meta:nth-child(2) {
+      display: none;
+    }
   }
 </style>

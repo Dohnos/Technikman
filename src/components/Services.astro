@@ -1,0 +1,115 @@
+---
+import { withBase } from '../lib/paths';
+import Icon from './Icon.astro';
+import { services, site, formatPrice } from '../data/site';
+---
+
+<section class="section" id="sluzby">
+  <div class="container">
+    <div class="section-head">
+      <p class="label">Služby a ceny</p>
+      <h2 class="h2">Tři služby, pevné ceny</h2>
+    </div>
+    <div class="services">
+      {services.map((s, i) => (
+        <article class:list={['service card', { 'service--main': s.main }]} data-reveal style={`--d:${i}`}>
+          <div class="service__top">
+            <h3 class="h3">{s.name}</h3>
+            {s.main && <span class="service__flag">Nejčastěji</span>}
+          </div>
+          <p class="service__price">
+            {s.priceFrom && <small>od </small>}
+            {formatPrice(s.price)}
+          </p>
+          <p class="service__lead">{s.lead}</p>
+          <ul class="service__list">
+            {s.features.map((f) => <li><Icon name="check" size={18} class="tick" />{f}</li>)}
+          </ul>
+          <a class:list={['btn btn--block', s.main ? 'btn--accent' : 'btn--ghost']} href={withBase('/#rezervace')} data-book={s.id}>
+            Rezervovat
+          </a>
+        </article>
+      ))}
+    </div>
+    <p class="services__note">
+      Doprava: Olomouc a okolí do {site.freeRadiusKm} km zdarma, dál {site.pricePerKm} Kč/km. Více aut v jednom dni? Cenu dopravy dělím.
+    </p>
+  </div>
+</section>
+
+<style>
+  .services {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .service {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 1.6rem;
+  }
+  .service--main {
+    border-color: var(--ink);
+    box-shadow: inset 0 3px 0 var(--accent);
+  }
+  .service__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .service__flag {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent-ink);
+  }
+  .service__price {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .service__price small {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .service__lead {
+    color: var(--muted);
+    font-size: 0.97rem;
+  }
+  .service__list {
+    list-style: none;
+    padding: 0.9rem 0 0;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 0.45rem;
+    margin-bottom: auto;
+    font-size: 0.97rem;
+  }
+  .service__list li {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  .service__list :global(.tick) {
+    margin-top: 3px;
+  }
+  .service .btn {
+    margin-top: 0.9rem;
+  }
+  .services__note {
+    margin-top: 1.25rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  @media (max-width: 900px) {
+    .services {
+      grid-template-columns: 1fr;
+      max-width: 520px;
+    }
+  }
+</style>
