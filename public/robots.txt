@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /brand/
-
-Sitemap: https://proklepto.cz/sitemap-index.xml

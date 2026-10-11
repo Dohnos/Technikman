@@ -1,11 +1,12 @@
 ---
+import { withBase } from '../lib/paths';
 import LogoMark from './LogoMark.astro';
 interface Props {
   href?: string;
   inverse?: boolean;
   size?: number;
 }
-const { href = '/', inverse = false, size = 40 } = Astro.props;
+const { href = withBase('/'), inverse = false, size = 40 } = Astro.props;
 ---
 
 <a href={href} class:list={['logo', { 'logo--inverse': inverse }]} aria-label="Proklepto – úvodní stránka">

@@ -1,4 +1,4 @@
-# Proklepto · v1.0.0
+# Proklepto · v1.0.1
 
 Web nezávislého technika pro **prověrku ojetých aut** – Olomoucký kraj a celá Morava.
 
@@ -23,7 +23,7 @@ Web nezávislého technika pro **prověrku ojetých aut** – Olomoucký kraj a 
 | Telefon, e-mail, otevírací doba, ceny, doprava | `src/data/site.ts` |
 | Co kontrolujeme, kroky, FAQ, značky | `src/data/site.ts` |
 | Města a jejich texty | `src/data/regions.ts` |
-| Doména | `astro.config.mjs` (`SITE`) + `public/robots.txt` + `src/data/site.ts` |
+| Doména | `astro.config.mjs` (`SITE`) + `src/data/site.ts` |
 
 > ⚠️ **Před spuštěním doplňte skutečný telefon** (`site.phone`, `site.phoneHref`) a ověřte e-mail, ceny a sliby (např. „termín do 48 h“, „120+ bodů“).
 
@@ -45,8 +45,19 @@ node scripts/generate-images.mjs
 
 ## Nasazení
 
-Složka `dist/` je čistě statická, takže funguje na jakémkoli hostingu (Cloudflare Pages, Netlify, Vercel, GitHub Pages, běžný webhosting).
-Build příkaz: `npm run build`, výstupní složka: `dist`.
+Web potřebuje **Node.js 22.12+** (je nastaveno v `package.json` → `engines` a v `.nvmrc`).
+
+### GitHub Pages
+1. V repozitáři otevřete **Settings → Pages**.
+2. U **Build and deployment → Source** vyberte **GitHub Actions**. Nevybírejte „Deploy from a branch“, ta větev by se stavěla přes Jekyll a nefungovala by.
+3. Každý push do `main` spustí workflow `.github/workflows/deploy.yml`. Ten web sestaví a nasadí na `https://dohnos.github.io/Technikman/`. Cesta `/Technikman` se nastaví automaticky, při vlastní doméně zmizí.
+
+### Vercel
+Stačí importovat repozitář. Nastavení je v `vercel.json` (framework Astro, `npm run build`, výstup `dist`).
+Pokud projekt už existuje se starým nastavením, ověřte v **Settings → Build and Deployment**, že **Node.js Version** je 22.x nebo novější a že nikde není ručně přepsaný výstupní adresář.
+
+### Vlastní doména
+Doménu nastavte v `astro.config.mjs` (`SITE`) a v `src/data/site.ts`. Na GitHub Pages ji workflow převezme automaticky.
 
 ## Struktura
 

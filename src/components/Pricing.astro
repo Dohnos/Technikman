@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/paths';
 import Icon from './Icon.astro';
 import { plans, site, formatPrice } from '../data/site';
 ---
@@ -26,7 +27,7 @@ import { plans, site, formatPrice } from '../data/site';
           <ul class="plan__list">
             {p.features.map((f) => <li><Icon name="check" size={18} />{f}</li>)}
           </ul>
-          <a class:list={['btn', 'btn--block', p.featured ? 'btn--brand' : 'btn--ghost']} href={`/#objednat`} data-plan={p.id}>
+          <a class:list={['btn', 'btn--block', p.featured ? 'btn--brand' : 'btn--ghost']} href={withBase('/#objednat')} data-plan={p.id}>
             {p.cta} <Icon name="arrow" size={18} class="icon-arrow" />
           </a>
         </article>

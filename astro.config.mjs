@@ -3,10 +3,13 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 // Produkční doména – použije se pro canonical URL, sitemapu a Open Graph.
-const SITE = 'https://proklepto.cz';
+// Na GitHub Pages ji (spolu s cestou /Technikman) nastaví workflow přes proměnné prostředí.
+const SITE = process.env.SITE_URL || 'https://proklepto.cz';
+const BASE = process.env.BASE_PATH || '/';
 
 export default defineConfig({
   site: SITE,
+  base: BASE,
   trailingSlash: 'always',
   compressHTML: true,
   build: {

@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/paths';
 import Icon from './Icon.astro';
 import { cities, regions, pageCities } from '../data/regions';
 import { site } from '../data/site';
@@ -39,7 +40,7 @@ const dots = cities.map((c) => ({ ...c, ...project(c.lat, c.lon), main: c.region
       </ul>
       <nav class="city-links" aria-label="Prověrka auta ve městech">
         {pageCities.map((c) => (
-          <a href={`/proverka-auta/${c.slug}/`} class:list={{ active: c.slug === active }}>
+          <a href={withBase(`/proverka-auta/${c.slug}/`)} class:list={{ active: c.slug === active }}>
             {c.name}
           </a>
         ))}
@@ -86,7 +87,7 @@ const dots = cities.map((c) => ({ ...c, ...project(c.lat, c.lon), main: c.region
               {label}
             </g>
           );
-          return d.page ? <a href={`/proverka-auta/${d.slug}/`} aria-label={`Prověrka auta ${d.locative}`}>{dot}</a> : dot;
+          return d.page ? <a href={withBase(`/proverka-auta/${d.slug}/`)} aria-label={`Prověrka auta ${d.locative}`}>{dot}</a> : dot;
         })}
       </svg>
       <div class="map__legend">

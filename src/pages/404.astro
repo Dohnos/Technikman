@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/paths';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 ---
@@ -9,7 +10,7 @@ import Icon from '../components/Icon.astro';
       <p class="nf__code">404</p>
       <h1 class="h2">Tuhle stránku jsme <span class="hl">neproklepli.</span></h1>
       <p class="lead">Odkaz je možná starý, nebo se překlepl. Auto vám ale prověříme rádi.</p>
-      <a class="btn btn--brand btn--lg" href="/">Zpět na úvod <Icon name="arrow" size={20} class="icon-arrow" /></a>
+      <a class="btn btn--brand btn--lg" href={withBase('/')}>Zpět na úvod <Icon name="arrow" size={20} class="icon-arrow" /></a>
     </div>
   </section>
 </Base>

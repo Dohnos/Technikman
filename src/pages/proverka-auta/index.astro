@@ -1,4 +1,5 @@
 ---
+import { withBase, absUrl } from '../../lib/paths';
 import Base from '../../layouts/Base.astro';
 import Coverage from '../../components/Coverage.astro';
 import Contact from '../../components/Contact.astro';
@@ -14,8 +15,8 @@ const schema = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Proklepto', item: siteUrl },
-      { '@type': 'ListItem', position: 2, name: 'Prověrka auta', item: new URL('/proverka-auta/', siteUrl).href },
+      { '@type': 'ListItem', position: 1, name: 'Proklepto', item: absUrl('/', siteUrl) },
+      { '@type': 'ListItem', position: 2, name: 'Prověrka auta', item: absUrl('/proverka-auta/', siteUrl) },
     ],
   },
 ];
@@ -40,7 +41,7 @@ const schema = [
             {g.cities.map((c, i) => {
               const t = travelPrice(c.distanceKm, site.freeRadiusKm, site.pricePerKm);
               return (
-                <a class="hub__card" href={`/proverka-auta/${c.slug}/`} data-reveal style={`--d:${i % 4}`}>
+                <a class="hub__card" href={withBase(`/proverka-auta/${c.slug}/`)} data-reveal style={`--d:${i % 4}`}>
                   <span class="icon-badge"><Icon name="pin" size={24} /></span>
                   <span class="hub__name">{c.name}</span>
                   <span class="hub__meta">{c.distanceKm === 0 ? 'Základna' : `cca ${c.distanceKm} km`} · doprava {t === 0 ? 'zdarma' : formatPrice(t)}</span>

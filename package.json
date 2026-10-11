@@ -1,9 +1,12 @@
 {
   "name": "proklepto",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "description": "Proklepto – nezávislá prověrka ojetých aut v Olomouckém kraji a na celé Moravě.",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

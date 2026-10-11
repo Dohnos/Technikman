@@ -1,14 +1,15 @@
 ---
+import { withBase } from '../lib/paths';
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import { site } from '../data/site';
 
 const links = [
-  { href: '/#co-kontrolujeme', label: 'Co kontrolujeme' },
-  { href: '/#jak-to-funguje', label: 'Jak to funguje' },
-  { href: '/#cenik', label: 'Ceník' },
-  { href: '/#kde-pusobime', label: 'Kde působíme' },
-  { href: '/#faq', label: 'Otázky' },
+  { href: withBase('/#co-kontrolujeme'), label: 'Co kontrolujeme' },
+  { href: withBase('/#jak-to-funguje'), label: 'Jak to funguje' },
+  { href: withBase('/#cenik'), label: 'Ceník' },
+  { href: withBase('/#kde-pusobime'), label: 'Kde působíme' },
+  { href: withBase('/#faq'), label: 'Otázky' },
 ];
 ---
 
@@ -25,7 +26,7 @@ const links = [
         <Icon name="phone" size={18} />
         <span>{site.phone}</span>
       </a>
-      <a class="btn btn--brand header__cta" href="/#objednat">Objednat prověrku</a>
+      <a class="btn btn--brand header__cta" href={withBase('/#objednat')}>Objednat prověrku</a>
       <button class="header__toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Otevřít menu" data-menu-toggle>
         <span></span><span></span>
       </button>
@@ -36,7 +37,7 @@ const links = [
       {links.map((l, i) => <li style={`--i:${i}`}><a href={l.href}>{l.label}<Icon name="arrow" size={20} /></a></li>)}
     </ul>
     <div class="mobile-menu__cta">
-      <a class="btn btn--brand btn--lg btn--block" href="/#objednat">Objednat prověrku</a>
+      <a class="btn btn--brand btn--lg btn--block" href={withBase('/#objednat')}>Objednat prověrku</a>
       <a class="btn btn--ghost btn--lg btn--block" href={site.phoneHref}><Icon name="phone" size={18} /> {site.phone}</a>
     </div>
   </div>
