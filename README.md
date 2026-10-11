@@ -1,4 +1,4 @@
-# Proklepto · v1.3.0
+# Proklepto · v1.3.1
 
 Web nezávislého technika pro **prověrku ojetých aut** – Olomoucký kraj a celá Morava.
 

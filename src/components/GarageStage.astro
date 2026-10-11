@@ -34,6 +34,10 @@ const steps = [
         </span>
       </div>
 
+      <a class="stage__skip" href="#uvod" data-stage-skip>
+        Přeskočit animaci <Icon name="arrow" size={18} class="stage__skip-icon" />
+      </a>
+
       <div class="stage__intro">
         <span class="label"><Icon name="search" size={16} /> Prověrka krok za krokem</span>
         <p class="stage__title">Takhle prověřuji ojeté auto</p>
@@ -154,6 +158,43 @@ const steps = [
     width: 28px;
     height: 28px;
     padding: 4px;
+  }
+
+  /* přeskočit animaci */
+  .stage__skip {
+    position: absolute;
+    top: clamp(0.75rem, 2vw, 1.25rem);
+    right: clamp(0.75rem, 2vw, 1.25rem);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.6rem 0.9rem 0.6rem 1.1rem;
+    border-radius: var(--pill);
+    background: rgb(255 255 255 / 0.92);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition:
+      opacity 0.3s,
+      transform 0.3s var(--spring),
+      background-color 0.2s;
+  }
+  .stage__skip:hover {
+    background: var(--ink);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+  .stage__skip :global(.stage__skip-icon) {
+    transform: rotate(90deg);
+  }
+  .stage.is-done .stage__skip,
+  .stage.is-static .stage__skip {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
   }
 
   /* úvodní popisek */
@@ -280,6 +321,13 @@ const steps = [
     .stage {
       height: 300svh;
     }
+    .stage__intro {
+      top: 4.2rem;
+    }
+    .stage__skip {
+      font-size: 0.85rem;
+      padding: 0.5rem 0.8rem 0.5rem 1rem;
+    }
     .stage__step-name {
       display: none;
     }
@@ -307,6 +355,16 @@ const steps = [
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) stage.classList.add('is-static');
 
+    // Přeskočit animaci: skok rovnou na obsah pod scénou (bez projíždění animace)
+    stage.querySelector<HTMLAnchorElement>('[data-stage-skip]')?.addEventListener('click', (e) => {
+      const target = document.getElementById('uvod') ?? stage.nextElementSibling;
+      if (!(target instanceof HTMLElement)) return;
+      e.preventDefault();
+      const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
+      window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - header, behavior: 'instant' });
+      target.focus({ preventScroll: true });
+    });
+
     const progress = () => {
       const r = stage.getBoundingClientRect();
       const sticky = stage.firstElementChild!.getBoundingClientRect().height;
@@ -316,6 +374,7 @@ const steps = [
     };
     const setUi = (p: number) => {
       stage.style.setProperty('--p', p.toFixed(4));
+      stage.classList.toggle('is-done', p > 0.97);
       steps.forEach((li, i) => {
         li.classList.toggle('is-done', p >= (i + 1) * 0.25 - 0.03);
         li.classList.toggle('is-active', p >= i * 0.25 && p < (i + 1) * 0.25 - 0.03);

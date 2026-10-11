@@ -23,7 +23,7 @@ const facts = [
 ];
 ---
 
-<section class="section hero">
+<section class="section hero" id="uvod" tabindex="-1">
   <div class="container hero__grid">
     <div class="hero__copy">
       <span class="label" data-reveal><Icon name="pin" size={16} /> {label}</span>
@@ -53,6 +53,9 @@ const facts = [
 </section>
 
 <style>
+  .hero:focus {
+    outline: none;
+  }
   .hero {
     padding-bottom: clamp(16px, 3vw, 32px);
   }
