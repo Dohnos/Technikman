@@ -16,6 +16,9 @@ export default defineConfig({
     inlineStylesheets: 'always',
     format: 'directory',
   },
+  vite: {
+    build: { chunkSizeWarningLimit: 700 },
+  },
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'hover',

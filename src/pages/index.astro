@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import GarageStage from '../components/GarageStage.astro';
 import Hero from '../components/Hero.astro';
 import Services from '../components/Services.astro';
 import Checks from '../components/Checks.astro';
@@ -25,6 +26,7 @@ const faqSchema = {
   description={`Nezávislá prověrka ojetého auta před koupí od ${services[0].price} Kč. Historie a VIN, lak, diagnostika, zkušební jízda, protokol týž den. Rezervace termínu online. Olomouc, Brno, Zlín, Ostrava.`}
   schema={[faqSchema]}
 >
+  <GarageStage />
   <Hero />
   <Services />
   <Checks />

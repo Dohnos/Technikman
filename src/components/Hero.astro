@@ -17,36 +17,36 @@ const {
 
 const minPrice = Math.min(...services.map((s) => s.price));
 const facts = [
-  { k: 'Cena', v: `od ${formatPrice(minPrice)}` },
-  { k: 'Protokol', v: 'ještě ten den' },
-  { k: 'Platba', v: 'až po prověrce' },
+  { icon: 'wallet', k: 'Cena', v: `od ${formatPrice(minPrice)}` },
+  { icon: 'file', k: 'Protokol', v: 'ještě ten den' },
+  { icon: 'clock', k: 'Platba', v: 'po prověrce' },
 ];
 ---
 
-<section class="hero">
+<section class="section hero">
   <div class="container hero__grid">
     <div class="hero__copy">
-      <p class="label">{label}</p>
-      <h1 class="h1">{title}</h1>
-      <p class="lead">{lead}</p>
-      <div class="hero__cta">
+      <span class="label" data-reveal><Icon name="pin" size={16} /> {label}</span>
+      <h1 class="h1" data-reveal style="--d:1">{title}</h1>
+      <p class="lead" data-reveal style="--d:2">{lead}</p>
+      <div class="hero__cta" data-reveal style="--d:3">
         <a class="btn btn--accent btn--lg" href={withBase('/#rezervace')}>
-          Vybrat termín <Icon name="arrow" size={18} class="icon-arrow" />
+          <Icon name="clock" size={18} /> Vybrat termín
         </a>
         <a class="btn btn--ghost btn--lg" href={site.phoneHref}>
           <Icon name="phone" size={18} /> {site.phone}
         </a>
       </div>
-      <dl class="hero__facts">
-        {facts.map((f) => (
-          <div>
-            <dt>{f.k}</dt>
-            <dd>{f.v}</dd>
-          </div>
+      <ul class="hero__facts">
+        {facts.map((f, i) => (
+          <li data-reveal style={`--d:${i + 4}`}>
+            <span class="badge"><Icon name={f.icon} size={20} /></span>
+            <span><small>{f.k}</small><b>{f.v}</b></span>
+          </li>
         ))}
-      </dl>
+      </ul>
     </div>
-    <div class="hero__visual">
+    <div class="hero__visual" data-reveal="right" style="--d:2">
       <Report />
     </div>
   </div>
@@ -54,7 +54,7 @@ const facts = [
 
 <style>
   .hero {
-    padding-block: clamp(40px, 6vw, 80px) clamp(56px, 8vw, 96px);
+    padding-bottom: clamp(16px, 3vw, 32px);
   }
   .hero__grid {
     display: grid;
@@ -71,48 +71,52 @@ const facts = [
     display: flex;
     flex-wrap: wrap;
     gap: 0.6rem;
-    margin-top: 0.4rem;
+    margin-top: 0.3rem;
   }
   .hero__facts {
+    list-style: none;
+    padding: 0;
     display: grid;
-    grid-template-columns: repeat(3, auto);
-    justify-content: start;
-    margin-top: 1rem;
-    border-top: 1px solid var(--line);
-    padding-top: 1.1rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
     width: 100%;
+    margin-top: 0.75rem;
   }
-  .hero__facts div {
-    padding: 0 1.5rem;
-    border-left: 1px solid var(--line);
+  .hero__facts li {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.75rem;
+    border-radius: var(--r);
+    background: var(--surface);
+    border: 1px solid var(--line);
   }
-  .hero__facts div:first-child {
-    padding-left: 0;
-    border-left: 0;
+  .hero__facts .badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
   }
-  .hero__facts dt {
-    font-size: 0.82rem;
+  .hero__facts small {
+    display: block;
     color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.2;
   }
-  .hero__facts dd {
-    font-weight: 600;
-    margin: 0;
+  .hero__facts b {
+    font-size: 0.95rem;
+    line-height: 1.25;
   }
   @media (max-width: 920px) {
     .hero__grid {
       grid-template-columns: 1fr;
     }
   }
-  @media (max-width: 520px) {
+  @media (max-width: 600px) {
     .hero__cta .btn {
       width: 100%;
     }
     .hero__facts {
-      grid-template-columns: repeat(3, 1fr);
-      font-size: 0.92rem;
-    }
-    .hero__facts div {
-      padding: 0 0.75rem;
+      grid-template-columns: 1fr;
     }
   }
 </style>

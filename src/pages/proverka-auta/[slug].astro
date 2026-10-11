@@ -1,6 +1,7 @@
 ---
 import { absUrl } from '../../lib/paths';
 import Base from '../../layouts/Base.astro';
+import GarageStage from '../../components/GarageStage.astro';
 import Hero from '../../components/Hero.astro';
 import Services from '../../components/Services.astro';
 import Checks from '../../components/Checks.astro';
@@ -72,6 +73,7 @@ const schema = [
   description={`Nezávislá prověrka ojetého auta ${city.locative} a okolí. Historie a VIN, lak, diagnostika, zkušební jízda. Prověrka na místě ${price} Kč, ${travelText}. Rezervace online.`}
   schema={schema}
 >
+  <GarageStage />
   <Breadcrumbs items={[{ name: 'Prověrka auta', href: '/proverka-auta/' }, { name: city.name }]} />
   <Hero
     label={`${city.region} · ${city.distanceKm === 0 ? 'základna' : `${city.distanceKm} km z Olomouce`} · ${travelText}`}

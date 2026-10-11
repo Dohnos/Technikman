@@ -1,0 +1,369 @@
+---
+import { withBase } from '../lib/paths';
+import Icon from './Icon.astro';
+
+// Štítky navázané na místa na autě (souřadnice 3D scény) a okamžik, kdy se objeví.
+const tags = [
+  { text: 'Lak: 118 µm, originál', anchor: [0, 1.75, 0.9], at: 0.22 },
+  { text: 'Motor: bez úniků', anchor: [1.5, 1.55, 0], at: 0.47 },
+  { text: 'Brzdy a podvozek OK', anchor: [1.35, 1.05, 1.05], at: 0.72 },
+];
+const verdict = { text: 'Doporučuji koupit', anchor: [-0.3, 2.35, 0], at: 0.93 };
+const steps = [
+  { icon: 'layers', name: 'Lak' },
+  { icon: 'wrench', name: 'Motor' },
+  { icon: 'disc', name: 'Podvozek' },
+  { icon: 'shield', name: 'Verdikt' },
+];
+---
+
+<section class="stage" data-stage aria-label="Animace: jak probíhá prověrka auta">
+  <div class="stage__sticky">
+    <div class="stage__frame">
+      <img class="stage__poster" src={withBase('/garage-poster.jpg')} alt="" width="1600" height="907" decoding="async" fetchpriority="high" />
+      <canvas class="stage__canvas" data-stage-canvas aria-hidden="true"></canvas>
+
+      <div class="stage__tags" aria-hidden="true">
+        {tags.map((t) => (
+          <span class="tag" data-anchor={JSON.stringify(t.anchor)} data-at={t.at}>
+            <span class="tag__in"><Icon name="check" size={16} />{t.text}</span>
+          </span>
+        ))}
+        <span class="tag tag--verdict" data-anchor={JSON.stringify(verdict.anchor)} data-at={verdict.at}>
+          <span class="tag__in"><Icon name="shield" size={18} />{verdict.text}</span>
+        </span>
+      </div>
+
+      <div class="stage__intro">
+        <span class="label"><Icon name="search" size={16} /> Prověrka krok za krokem</span>
+        <p class="stage__title">Takhle prověřuji ojeté auto</p>
+        <span class="stage__cue" aria-hidden="true"><span></span></span>
+      </div>
+
+      <div class="stage__steps">
+        <ol data-stage-steps>
+          {steps.map((s) => (
+            <li>
+              <span class="stage__step-icon"><Icon name={s.icon} size={18} /></span>
+              <span class="stage__step-name">{s.name}</span>
+            </li>
+          ))}
+        </ol>
+        <span class="stage__bar" aria-hidden="true"><span></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .stage {
+    position: relative;
+    height: 340svh;
+  }
+  .stage.is-static {
+    height: auto;
+  }
+  .stage__sticky {
+    position: sticky;
+    top: var(--header-h);
+    height: calc(100svh - var(--header-h));
+    min-height: 460px;
+    padding: 12px var(--edge) var(--edge);
+  }
+  .stage.is-static .stage__sticky {
+    position: relative;
+  }
+  .stage__frame {
+    position: relative;
+    height: 100%;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    background: #f3f1ec;
+    border: 1px solid var(--line);
+    isolation: isolate;
+  }
+  .stage__poster,
+  .stage__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .stage__poster {
+    object-fit: cover;
+  }
+  .stage__canvas {
+    opacity: 0;
+    transition: opacity 0.8s var(--ease);
+  }
+  .stage.is-ready .stage__canvas {
+    opacity: 1;
+  }
+
+  /* štítky */
+  .stage__tags {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+  }
+  .tag__in {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem 0.5rem 0.6rem;
+    margin-bottom: 10px;
+    border-radius: var(--pill);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    font-size: 0.88rem;
+    font-weight: 700;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(8px) scale(0.85);
+    transition:
+      opacity 0.35s var(--ease),
+      transform 0.45s var(--spring);
+  }
+  .tag__in :global(.icon) {
+    padding: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--ok-soft);
+    color: var(--ok);
+  }
+  .tag.is-on .tag__in {
+    opacity: 1;
+    transform: none;
+  }
+  .tag--verdict .tag__in {
+    padding: 0.7rem 1.2rem 0.7rem 0.75rem;
+    font-size: 1.05rem;
+    background: var(--ok);
+    color: #fff;
+  }
+  .tag--verdict .tag__in :global(.icon) {
+    background: rgb(255 255 255 / 0.2);
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+  }
+
+  /* úvodní popisek */
+  .stage__intro {
+    position: absolute;
+    left: clamp(1rem, 3vw, 2rem);
+    top: clamp(1rem, 3vw, 2rem);
+    display: grid;
+    gap: 0.6rem;
+    justify-items: start;
+    max-width: 22rem;
+    opacity: clamp(0, calc(1 - var(--p, 0) * 9), 1);
+    transform: translateY(calc(var(--p, 0) * -120px));
+  }
+  .stage__title {
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+  .stage__cue {
+    width: 26px;
+    height: 40px;
+    border: 2px solid var(--ink);
+    border-radius: var(--pill);
+    display: grid;
+    justify-items: center;
+    padding-top: 6px;
+    margin-top: 0.4rem;
+  }
+  .stage__cue span {
+    width: 4px;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--accent);
+    animation: cue 1.6s var(--ease) infinite;
+  }
+  @keyframes cue {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(14px);
+      opacity: 0;
+    }
+  }
+
+  /* kroky dole */
+  .stage__steps {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(0.75rem, 2vw, 1.5rem);
+    translate: -50% 0;
+    padding: 0.4rem 0.4rem 0.75rem;
+    border-radius: var(--r-lg);
+    background: rgb(255 255 255 / 0.92);
+    box-shadow: var(--shadow);
+  }
+  .stage__steps ol {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    padding: 0;
+  }
+  .stage__steps li {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.85rem 0.45rem 0.45rem;
+    border-radius: var(--pill);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--muted);
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+  .stage__step-icon {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--bg);
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+  .stage__steps :global(li.is-active) {
+    background: var(--accent-soft);
+    color: var(--ink);
+  }
+  .stage__steps :global(li.is-active) .stage__step-icon {
+    background: var(--accent);
+    color: #fff;
+  }
+  .stage__steps :global(li.is-done) {
+    color: var(--ink);
+  }
+  .stage__steps :global(li.is-done) .stage__step-icon {
+    background: var(--ok);
+    color: #fff;
+  }
+  .stage__bar {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 0.4rem;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--line);
+    overflow: hidden;
+  }
+  .stage__bar span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    transform-origin: 0 50%;
+    transform: scaleX(var(--p, 0));
+  }
+
+  @media (max-width: 640px) {
+    .stage {
+      height: 300svh;
+    }
+    .stage__step-name {
+      display: none;
+    }
+    .stage__steps li {
+      padding: 0.3rem;
+    }
+    .stage__steps :global(li.is-active) .stage__step-name {
+      display: inline;
+    }
+    .stage__steps :global(li.is-active) {
+      padding-right: 0.8rem;
+    }
+    .tag__in {
+      font-size: 0.78rem;
+      padding: 0.4rem 0.7rem 0.4rem 0.45rem;
+    }
+  }
+</style>
+
+<script>
+  const stage = document.querySelector<HTMLElement>('[data-stage]');
+  if (stage) {
+    const canvas = stage.querySelector<HTMLCanvasElement>('[data-stage-canvas]')!;
+    const steps = [...stage.querySelectorAll<HTMLLIElement>('[data-stage-steps] li')];
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) stage.classList.add('is-static');
+
+    const progress = () => {
+      const r = stage.getBoundingClientRect();
+      const sticky = stage.firstElementChild!.getBoundingClientRect().height;
+      const top = parseFloat(getComputedStyle(stage.firstElementChild!).top) || 0;
+      const total = r.height - sticky;
+      return total > 0 ? Math.min(1, Math.max(0, (top - r.top) / total)) : 1;
+    };
+    const setUi = (p: number) => {
+      stage.style.setProperty('--p', p.toFixed(4));
+      steps.forEach((li, i) => {
+        li.classList.toggle('is-done', p >= (i + 1) * 0.25 - 0.03);
+        li.classList.toggle('is-active', p >= i * 0.25 && p < (i + 1) * 0.25 - 0.03);
+      });
+    };
+
+    const hasGL = (() => {
+      try {
+        const c = document.createElement('canvas');
+        return !!(c.getContext('webgl2') || c.getContext('webgl'));
+      } catch {
+        return false;
+      }
+    })();
+
+    if (!hasGL) {
+      const onScroll = () => setUi(reduced ? 1 : progress());
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    } else {
+      import('../scripts/garage').then(({ createGarage }) => {
+        const labels = [...stage.querySelectorAll<HTMLElement>('[data-anchor]')].map((el) => ({
+          el,
+          anchor: JSON.parse(el.dataset.anchor!) as [number, number, number],
+          at: Number(el.dataset.at),
+        }));
+        const garage = createGarage(canvas, { labels, reduced, onFrame: setUi });
+        stage.classList.add('is-ready');
+
+        const onScroll = () => garage.setProgress(progress());
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', () => {
+          garage.resize();
+          onScroll();
+        });
+
+        let visible = true;
+        new IntersectionObserver(([e]) => {
+          visible = e.isIntersecting;
+          if (visible && !document.hidden) garage.start();
+          else garage.stop();
+        }).observe(stage);
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) garage.stop();
+          else if (visible) garage.start();
+        });
+      });
+    }
+  }
+</script>

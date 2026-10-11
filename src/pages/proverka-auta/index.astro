@@ -30,7 +30,7 @@ const schema = [
   <Breadcrumbs items={[{ name: 'Prověrka auta' }]} />
   <section class="container hub">
     <div class="section-head">
-      <p class="label">Prověrka auta podle města</p>
+      <span class="label">Prověrka auta podle města</span>
       <h1 class="h1">Kam jezdím</h1>
       <p class="lead">Základna je v Olomouci. U každého města vidíte vzdálenost a cenu dopravy.</p>
     </div>
@@ -71,15 +71,22 @@ const schema = [
   .hub__list {
     list-style: none;
     padding: 0;
-    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 0.5rem;
   }
   .hub__list a {
     display: grid;
     grid-template-columns: 1fr 8rem 10rem;
     gap: 1rem;
-    padding: 0.85rem 0;
-    border-bottom: 1px solid var(--line);
+    padding: 0.9rem 1.3rem;
+    border-radius: var(--pill);
+    background: var(--surface);
+    border: 1px solid var(--line);
     text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  .hub__list a:hover {
+    border-color: var(--accent);
   }
   .hub__list a:hover .hub__name {
     color: var(--accent-ink);

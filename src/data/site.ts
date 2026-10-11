@@ -5,7 +5,7 @@
 
 export const site = {
   name: 'Proklepto',
-  version: '1.1.0',
+  version: '1.2.0',
   url: 'https://proklepto.cz',
   tagline: 'Ojetinu nejdřív proklepneme.',
   description:
@@ -32,6 +32,7 @@ export type Service = {
   priceFrom?: boolean;
   /** probíhá na místě u auta (true) nebo na dálku (false) */
   onSite: boolean;
+  icon: string;
   lead: string;
   features: string[];
   main?: boolean;
@@ -41,6 +42,7 @@ export const services: Service[] = [
   {
     id: 'dalku',
     name: 'Prověrka na dálku',
+    icon: 'search',
     price: 990,
     onSite: false,
     lead: 'Než pojedete přes půl Moravy, zjistím, jestli to auto za cestu stojí.',
@@ -49,6 +51,7 @@ export const services: Service[] = [
   {
     id: 'misto',
     name: 'Prověrka na místě',
+    icon: 'car',
     price: 3990,
     onSite: true,
     main: true,
@@ -64,6 +67,7 @@ export const services: Service[] = [
   {
     id: 'klic',
     name: 'Auto na klíč',
+    icon: 'key',
     price: 9990,
     priceFrom: true,
     onSite: false,
@@ -86,10 +90,10 @@ export const checks = [
 ];
 
 export const steps = [
-  { title: 'Vyberete termín', text: 'V kalendáři zvolíte službu a čas a pošlete odkaz na inzerát.' },
-  { title: 'Ověřím historii', text: 'Před výjezdem zkontroluji VIN. Když je auto podezřelé, řeknu vám to hned.' },
-  { title: 'Prověřím auto', text: 'Na místě 1,5 až 2,5 hodiny. Nemusíte u toho být.' },
-  { title: 'Dostanete verdikt', text: 'Telefonát z místa, protokol s fotkami ještě ten den.' },
+  { icon: 'clock', title: 'Vyberete termín', text: 'V kalendáři zvolíte službu a čas a pošlete odkaz na inzerát.' },
+  { icon: 'history', title: 'Ověřím historii', text: 'Před výjezdem zkontroluji VIN. Když je auto podezřelé, řeknu vám to hned.' },
+  { icon: 'search', title: 'Prověřím auto', text: 'Na místě 1,5 až 2,5 hodiny. Nemusíte u toho být.' },
+  { icon: 'shield', title: 'Dostanete verdikt', text: 'Telefonát z místa, protokol s fotkami ještě ten den.' },
 ];
 
 export const faqs = [

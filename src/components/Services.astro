@@ -6,32 +6,34 @@ import { services, site, formatPrice } from '../data/site';
 
 <section class="section" id="sluzby">
   <div class="container">
-    <div class="section-head">
-      <p class="label">Služby a ceny</p>
+    <div class="section-head" data-reveal>
+      <span class="label"><Icon name="tag" size={16} /> Služby a ceny</span>
       <h2 class="h2">Tři služby, pevné ceny</h2>
     </div>
     <div class="services">
       {services.map((s, i) => (
         <article class:list={['service card', { 'service--main': s.main }]} data-reveal style={`--d:${i}`}>
           <div class="service__top">
-            <h3 class="h3">{s.name}</h3>
-            {s.main && <span class="service__flag">Nejčastěji</span>}
+            <span class:list={['badge', { 'badge--ink': s.main }]}><Icon name={s.icon} size={24} /></span>
+            {s.main && <span class="service__flag"><Icon name="star" size={14} /> Nejčastěji</span>}
           </div>
+          <h3 class="h3">{s.name}</h3>
           <p class="service__price">
             {s.priceFrom && <small>od </small>}
             {formatPrice(s.price)}
           </p>
           <p class="service__lead">{s.lead}</p>
           <ul class="service__list">
-            {s.features.map((f) => <li><Icon name="check" size={18} class="tick" />{f}</li>)}
+            {s.features.map((f) => <li><Icon name="check" size={16} class="tick" />{f}</li>)}
           </ul>
           <a class:list={['btn btn--block', s.main ? 'btn--accent' : 'btn--ghost']} href={withBase('/#rezervace')} data-book={s.id}>
-            Rezervovat
+            Rezervovat <Icon name="arrow" size={18} class="icon-arrow" />
           </a>
         </article>
       ))}
     </div>
-    <p class="services__note">
+    <p class="services__note" data-reveal>
+      <Icon name="route" size={20} />
       Doprava: Olomouc a okolí do {site.freeRadiusKm} km zdarma, dál {site.pricePerKm} Kč/km. Více aut v jednom dni? Cenu dopravy dělím.
     </p>
   </div>
@@ -42,40 +44,61 @@ import { services, site, formatPrice } from '../data/site';
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
+    align-items: stretch;
   }
   .service {
     display: flex;
     flex-direction: column;
-    gap: 0.9rem;
+    gap: 0.75rem;
     padding: 1.6rem;
+    transition:
+      transform 0.4s var(--spring),
+      box-shadow 0.4s var(--ease),
+      border-color 0.3s;
+  }
+  .service:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow);
+  }
+  .service:hover .badge:not(.badge--ink) {
+    background: var(--accent);
+    color: #fff;
+    transform: rotate(-6deg);
   }
   .service--main {
-    border-color: var(--ink);
-    box-shadow: inset 0 3px 0 var(--accent);
+    border: 2px solid var(--ink);
   }
   .service__top {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    gap: 0.5rem;
+    align-items: flex-start;
+    margin-bottom: 0.25rem;
   }
   .service__flag {
-    font-size: 0.78rem;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--pill);
+    background: var(--accent-soft);
     color: var(--accent-ink);
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+  .service__flag :global(.icon) {
+    fill: currentColor;
   }
   .service__price {
-    font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 800;
     font-size: 2rem;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
     line-height: 1;
   }
   .service__price small {
-    font-family: var(--font-body);
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--muted);
+    letter-spacing: 0;
   }
   .service__lead {
     color: var(--muted);
@@ -86,30 +109,51 @@ import { services, site, formatPrice } from '../data/site';
     padding: 0.9rem 0 0;
     border-top: 1px solid var(--line);
     display: grid;
-    gap: 0.45rem;
+    gap: 0.5rem;
     margin-bottom: auto;
     font-size: 0.97rem;
+    font-weight: 500;
   }
   .service__list li {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.55rem;
     align-items: flex-start;
   }
   .service__list :global(.tick) {
-    margin-top: 3px;
+    margin-top: 2px;
+    padding: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--ok-soft);
   }
   .service .btn {
-    margin-top: 0.9rem;
+    margin-top: 1rem;
   }
   .services__note {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     margin-top: 1.25rem;
-    color: var(--muted);
+    padding: 0.9rem 1.2rem;
+    border-radius: var(--pill);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
     font-size: 0.95rem;
+    width: fit-content;
+  }
+  .services__note :global(.icon) {
+    color: var(--accent);
+    flex-shrink: 0;
   }
   @media (max-width: 900px) {
     .services {
       grid-template-columns: 1fr;
       max-width: 520px;
+    }
+    .services__note {
+      border-radius: var(--r);
     }
   }
 </style>

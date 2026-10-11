@@ -1,4 +1,4 @@
-# Proklepto · v1.1.0
+# Proklepto · v1.2.0
 
 Web nezávislého technika pro **prověrku ojetých aut** – Olomoucký kraj a celá Morava.
 
@@ -6,8 +6,9 @@ Web nezávislého technika pro **prověrku ojetých aut** – Olomoucký kraj a 
 
 - **[Astro](https://astro.build)**: statické HTML, téměř žádný JavaScript. Výsledek je rychlý web, který Google snadno indexuje.
 - Čisté CSS s design tokeny (`src/styles/global.css`), CSS je vložené přímo do HTML.
-- Self-hostované variabilní fonty (Archivo + Inter) s preloadem.
-- Animace: jen jemné objevení obsahu při scrollu. Respektuje `prefers-reduced-motion`.
+- Self-hostovaný variabilní font Plus Jakarta Sans s preloadem.
+- Úvodní 3D scéna v [three.js](https://threejs.org) (`src/scripts/garage.ts`): mechanik prověřuje auto, průběh řídí scroll. Knihovna se načítá až dodatečně (~137 kB gzip), takže nebrzdí první zobrazení. Bez WebGL se ukáže statický obrázek `public/garage-poster.jpg`.
+- Postupné objevování obsahu při scrollu. Respektuje `prefers-reduced-motion`: 3D scéna se pak nehýbe a ukáže rovnou výsledek.
 - Rezervace termínu: vestavěný kalendář (`src/components/Booking.astro`), viz níže.
 
 ## SEO
@@ -55,7 +56,7 @@ npm run build     # výstup do ./dist
 npm run preview
 ```
 
-OG obrázek a PNG ikony se generují z `scripts/og.html` a `scripts/icon.html`:
+OG obrázek a PNG ikony se generují z `scripts/og.html` a `scripts/icon.html` (OG používá `public/garage-poster.jpg`, snímek 3D scény):
 
 ```bash
 npm i --no-save playwright && npx playwright install chromium   # jen poprvé
@@ -82,7 +83,8 @@ Doménu nastavte v `astro.config.mjs` (`SITE`) a v `src/data/site.ts`. Na GitHub
 
 ```
 src/
-  components/   Hero, Report (ukázka protokolu), Services, Checks, Process, Booking (kalendář), Coverage (mapa), Faq…
+  components/   GarageStage (3D úvod), Hero, Report (ukázka protokolu), Services, Checks, Process, Booking (kalendář), Coverage (mapa), Faq…
+  scripts/      garage.ts – 3D scéna (auto, mechanik, kamera, animace podle scrollu)
   data/         site.ts, regions.ts, booking.ts – veškerý obsah
   layouts/      Base.astro – SEO hlavička, JSON-LD, scroll reveal
   pages/        index, proverka-auta/[slug], proverka-auta/index, brand, 404

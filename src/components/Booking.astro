@@ -22,10 +22,10 @@ const config = JSON.stringify({
 const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
 ---
 
-<section class="section section--white" id="rezervace">
+<section class="section panel" id="rezervace">
   <div class="container">
-    <div class="section-head">
-      <p class="label">Rezervace</p>
+    <div class="section-head" data-reveal>
+      <span class="label"><Icon name="clock" size={16} /> Rezervace</span>
       <h2 class="h2">Vyberte si termín</h2>
       <p class="lead">Zvolte službu, den a čas. {booking.confirmText}</p>
     </div>
@@ -33,7 +33,7 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
     {useEmbed ? (
       <iframe class="booking-embed card" src={booking.embedUrl} title="Rezervace termínu" loading="lazy"></iframe>
     ) : (
-      <form class="booking card" data-booking data-config={config} novalidate>
+      <form class="booking card" data-reveal data-booking data-config={config} novalidate>
         <div class="booking__col">
           <fieldset class="step">
             <legend><span>1</span> Služba</legend>
@@ -114,7 +114,7 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
         </div>
 
         <div class="done" data-done hidden tabindex="-1">
-          <Icon name="check" size={28} class="tick" />
+          <span class="badge badge--done"><Icon name="check" size={28} /></span>
           <h3 class="h2" data-done-title>Rezervace odeslána</h3>
           <p class="done__summary" data-done-summary></p>
           <p class="hint" data-done-note>{booking.confirmText}</p>
@@ -132,6 +132,9 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
 <style>
   .booking {
     position: relative;
+    border-radius: var(--r-xl);
+    background: var(--bg);
+    border: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0;
@@ -161,10 +164,10 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
   .step legend span {
     display: grid;
     place-items: center;
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
-    background: var(--ink);
+    background: var(--accent);
     color: #fff;
     font-size: 0.8rem;
   }
@@ -179,8 +182,9 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
     align-items: center;
     gap: 0.75rem;
     padding: 0.8rem 1rem;
-    border: 1px solid var(--line-2);
-    border-radius: var(--r);
+    border: 1.5px solid var(--line);
+    border-radius: var(--pill);
+    background: var(--surface);
     cursor: pointer;
     transition:
       border-color 0.15s,
@@ -190,9 +194,8 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
     border-color: var(--ink);
   }
   .pick:has(input:checked) {
-    border-color: var(--ink);
-    background: var(--bg);
-    box-shadow: inset 0 0 0 1px var(--ink);
+    border-color: var(--accent);
+    background: var(--accent-soft);
   }
   .pick input {
     accent-color: var(--accent);
@@ -223,9 +226,9 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
   .cal__nav {
     display: grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
-    border-radius: var(--r-sm);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
     border: 1px solid var(--line-2);
     background: var(--surface);
     cursor: pointer;
@@ -250,11 +253,13 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
   }
   .cal__grid :global(.day) {
     height: 42px;
+    width: 42px;
+    justify-self: center;
     display: grid;
     place-items: center;
-    border: 1px solid transparent;
-    border-radius: var(--r-sm);
-    background: var(--bg);
+    border: 1.5px solid transparent;
+    border-radius: 50%;
+    background: var(--surface);
     font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
@@ -277,7 +282,7 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
     text-underline-offset: 3px;
   }
   .cal__grid :global(.day[aria-pressed='true']) {
-    background: var(--ink);
+    background: var(--accent);
     color: #fff;
   }
 
@@ -289,8 +294,8 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
   }
   .slots :global(.slot) {
     padding: 0.65rem 0;
-    border: 1px solid var(--line-2);
-    border-radius: var(--r-sm);
+    border: 1.5px solid var(--line);
+    border-radius: var(--pill);
     background: var(--surface);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
@@ -300,8 +305,8 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
     border-color: var(--ink);
   }
   .slots :global(.slot[aria-pressed='true']) {
-    background: var(--ink);
-    border-color: var(--ink);
+    background: var(--accent);
+    border-color: var(--accent);
     color: #fff;
   }
   .booking :global(.hint) {
@@ -332,9 +337,9 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
   .field input,
   .field textarea {
     width: 100%;
-    padding: 0.7rem 0.85rem;
-    border: 1px solid var(--line-2);
-    border-radius: var(--r-sm);
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
     background: var(--surface);
     font-weight: 400;
     font-size: 1rem;
@@ -345,8 +350,8 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
   .field input:focus,
   .field textarea:focus {
     outline: none;
-    border-color: var(--ink);
-    box-shadow: 0 0 0 3px rgb(22 24 27 / 0.08);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
   }
   .field input:user-invalid {
     border-color: #c0392b;
@@ -373,6 +378,7 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
   .done {
     position: absolute;
     inset: 0;
+    border-radius: inherit;
     display: grid;
     place-content: center;
     justify-items: center;
@@ -380,6 +386,13 @@ const weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
     padding: 2rem;
     text-align: center;
     background: var(--surface);
+  }
+  .done :global(.badge--done) {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--ok);
+    color: #fff;
   }
   .done[hidden] {
     display: none;

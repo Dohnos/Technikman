@@ -2,6 +2,7 @@
 import { withBase } from '../lib/paths';
 import { cities, regions, pageCities } from '../data/regions';
 import { site } from '../data/site';
+import Icon from './Icon.astro';
 
 interface Props {
   active?: string;
@@ -25,15 +26,15 @@ const grouped = Object.values(regions).map((r) => ({ region: r, cities: pageCiti
 <section class="section" id="kde-jezdim">
   <div class="container coverage">
     <div>
-      <div class="section-head">
-        <p class="label">Kde jezdím</p>
+      <div class="section-head" data-reveal>
+        <span class="label"><Icon name="pin" size={16} /> Kde jezdím</span>
         <h2 class="h2">Olomoucký kraj a celá Morava</h2>
         <p class="lead">Základnu mám v Olomouci. Do {site.freeRadiusKm} km jezdím zdarma, dál za {site.pricePerKm} Kč/km.</p>
       </div>
       <div class="regions">
         {grouped.map((g) => g.cities.length > 0 && (
-          <div class="region">
-            <h3>{g.region}</h3>
+          <div class="region" data-reveal>
+            <h3><Icon name="pin" size={16} /> {g.region}</h3>
             <ul>
               {g.cities.map((c) => (
                 <li><a href={withBase(`/proverka-auta/${c.slug}/`)} aria-current={c.slug === active ? 'page' : undefined}>{c.name}</a></li>
@@ -90,16 +91,19 @@ const grouped = Object.values(regions).map((r) => ({ region: r, cities: pageCiti
     gap: 1.1rem;
   }
   .region {
-    padding-top: 1rem;
-    border-top: 1px solid var(--line);
+    padding: 1rem 1.2rem;
+    border-radius: var(--r);
+    background: var(--surface);
+    border: 1px solid var(--line);
   }
   .region h3 {
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    font-weight: 600;
-    font-stretch: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.88rem;
+    font-weight: 700;
     color: var(--muted);
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.5rem;
     letter-spacing: 0;
   }
   .region ul {
@@ -109,21 +113,35 @@ const grouped = Object.values(regions).map((r) => ({ region: r, cities: pageCiti
     list-style: none;
     padding: 0;
   }
+  .region h3 :global(.icon) {
+    color: var(--accent);
+  }
+  .region ul {
+    gap: 0.4rem;
+  }
   .region a {
-    font-weight: 550;
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--pill);
+    background: var(--bg);
+    font-weight: 600;
+    font-size: 0.95rem;
     text-decoration: none;
-    border-bottom: 1px solid var(--line-2);
+    transition:
+      background-color 0.2s,
+      color 0.2s;
   }
   .region a:hover,
   .region a[aria-current='page'] {
-    color: var(--accent-ink);
-    border-bottom-color: currentColor;
+    background: var(--accent);
+    color: #fff;
   }
   .map {
     border: 1px solid var(--line);
-    border-radius: var(--r-lg);
+    border-radius: var(--r-xl);
     overflow: hidden;
     background: #fff;
+    box-shadow: var(--shadow);
   }
   .map svg {
     width: 100%;

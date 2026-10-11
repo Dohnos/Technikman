@@ -7,19 +7,19 @@ import { site } from '../data/site';
 
 const colors = [
   { name: 'Asfalt', hex: '#16181B', role: 'Text, tmavé plochy, logo', fg: '#fff' },
-  { name: 'Papír', hex: '#F7F6F3', role: 'Pozadí stránky', fg: '#16181B' },
+  { name: 'Papír', hex: '#F3F1EC', role: 'Pozadí stránky', fg: '#16181B' },
   { name: 'Bílá', hex: '#FFFFFF', role: 'Karty, formuláře', fg: '#16181B' },
-  { name: 'Linka', hex: '#E3E1DC', role: 'Oddělovače, rámečky', fg: '#16181B' },
-  { name: 'Signál', hex: '#E0531F', role: 'Jediný akcent: hlavní tlačítko, logo', fg: '#fff' },
+  { name: 'Linka', hex: '#E6E2DA', role: 'Oddělovače, rámečky', fg: '#16181B' },
+  { name: 'Signál', hex: '#E0531F', role: 'Akcent: hlavní tlačítko, ikony, logo', fg: '#fff' },
   { name: 'OK / Pozor', hex: '#1E8A5A · #B7791F', role: 'Jen stavy v protokolu', fg: '#fff', split: true },
 ];
 const icons = ['history', 'layers', 'cpu', 'wrench', 'disc', 'seat', 'steering', 'file', 'phone', 'mail', 'pin', 'check'];
 const rules = [
-  ['Jeden akcent', 'Oranžová jen pro hlavní akci a logo. Nikdy jako plocha nebo přechod.'],
-  ['Linky, ne stíny', 'Oddělujeme tenkou linkou. Bez stínů, rozmazání a přechodů.'],
-  ['Konkrétně', 'Ukazujeme skutečné věci: protokol, ceny, mapu. Žádné ilustrace pro efekt.'],
+  ['Kulaté tvary', 'Vše zaoblené: karty 28 px, panely 40 px, tlačítka a štítky jako pilulka.'],
+  ['Jeden akcent', 'Oranžová pro hlavní akci, ikony a logo. Zelená jen pro „v pořádku“.'],
+  ['Ikony všude', 'Každá sekce, služba a krok má svou ikonu v zaobleném odznaku.'],
+  ['Mechanik v 3D', 'Úvod tvoří 3D scéna: mechanik prověřuje auto podle scrollu.'],
   ['Stručně', 'Krátké věty v první osobě. „Přijedu, zkontroluji, zavolám.“'],
-  ['Klidný pohyb', 'Animace jen jemné objevení obsahu. Nic, co poskakuje nebo se točí.'],
   ['Neslibovat', 'Píšeme jen to, co jde dodržet a ověřit.'],
 ];
 ---
@@ -29,7 +29,7 @@ const rules = [
     <div class="section-head">
       <p class="label">Brand manuál · v{site.version}</p>
       <h1 class="h1">Proklepto</h1>
-      <p class="lead">Z „proklepnout“: důkladně prověřit, než se rozhodnete. Značka má působit jako dobrý technik: věcně, přesně a v klidu.</p>
+      <p class="lead">Z „proklepnout“: důkladně prověřit, než se rozhodnete. Značka má působit jako dobrý technik: přátelsky, přesně a srozumitelně.</p>
     </div>
 
     <h2 class="h3 b-title">Logo</h2>
@@ -41,7 +41,7 @@ const rules = [
     <ul class="b-notes">
       <li>Značka je písmeno „P“: bříško tvoří lupa, nožička její rukojeť. Fajfka v lupě znamená „v pořádku“.</li>
       <li>Dvě barvy: Asfalt a Signál. Na tmavém pozadí bílý čtverec.</li>
-      <li>Logotyp „proklepto“ malými písmeny, Archivo Bold. Ochranná zóna ¼ šířky značky, minimum 24 px.</li>
+      <li>Logotyp „proklepto“ malými písmeny, Plus Jakarta Sans ExtraBold. Ochranná zóna ¼ šířky značky, minimum 24 px.</li>
     </ul>
 
     <h2 class="h3 b-title">Barvy</h2>
@@ -59,11 +59,11 @@ const rules = [
     <h2 class="h3 b-title">Písmo</h2>
     <div class="b-type">
       <div class="b-tile b-tile--left">
-        <small>Nadpisy · Archivo 700, šířka 94 %</small>
+        <small>Nadpisy · Plus Jakarta Sans 800</small>
         <p class="b-type__display">Prověrka ojetého auta před koupí</p>
       </div>
       <div class="b-tile b-tile--left">
-        <small>Text · Inter 400–600, 17 px</small>
+        <small>Text · Plus Jakarta Sans 400–600, 17 px</small>
         <p>Přijedu k autu, které chcete koupit, a zkontroluji ho od historie po podvozek. Ještě ten den víte, jestli ho koupit a za kolik.</p>
       </div>
     </div>
@@ -74,16 +74,16 @@ const rules = [
         <div class="b-icon"><Icon name={n} size={24} /><small>{n}</small></div>
       ))}
     </div>
-    <p class="b-caption">Lineární, 24 × 24 px, tah 1,75 px. Barva textu nebo Signál, nikdy v barevném podkladu.</p>
+    <p class="b-caption">Lineární, 24 × 24 px, tah 1,75 px. V sekcích v zaobleném odznaku 48 px (radius 16 px) se světle oranžovým podkladem.</p>
 
     <h2 class="h3 b-title">Prvky</h2>
     <div class="b-tile b-tile--left b-components">
       <a class="btn btn--accent" href="#">Rezervovat termín</a>
       <a class="btn" href="#">Sekundární</a>
       <a class="btn btn--ghost" href="#">Obrysové</a>
-      <span class="label">Štítek sekce</span>
+      <span class="label"><Icon name="search" size={16} /> Štítek sekce</span>
     </div>
-    <p class="b-caption">Zaoblení 8 / 12 / 16 px. Tlačítka 12 px. Jedno akcentové tlačítko na obrazovku.</p>
+    <p class="b-caption">Zaoblení 12 / 18 / 28 / 40 px, tlačítka a štítky jako pilulka.</p>
 
     <h2 class="h3 b-title">Pravidla</h2>
     <dl class="b-rules">
@@ -113,7 +113,7 @@ const rules = [
     padding: 1.5rem;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: var(--r-lg);
+    border-radius: var(--r-xl);
   }
   .b-tile--dark {
     background: var(--dark);
@@ -148,7 +148,7 @@ const rules = [
   }
   .b-swatch {
     height: 88px;
-    border-radius: var(--r);
+    border-radius: var(--r-lg);
     border: 1px solid var(--line);
     margin-bottom: 0.5rem;
   }
@@ -166,27 +166,24 @@ const rules = [
     color: var(--muted);
   }
   .b-type__display {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-stretch: 94%;
+    font-weight: 800;
     font-size: 2.2rem;
-    line-height: 1.08;
-    letter-spacing: -0.02em;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
   }
   .b-icons {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    border-top: 1px solid var(--line);
-    border-left: 1px solid var(--line);
+    gap: 0.6rem;
   }
   .b-icon {
     display: grid;
     justify-items: center;
     gap: 0.4rem;
     padding: 1.1rem 0.5rem;
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    border-radius: var(--r);
     background: var(--surface);
+    color: var(--accent);
   }
   .b-icon small {
     color: var(--muted);
