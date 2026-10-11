@@ -1,0 +1,125 @@
+---
+import Icon from './Icon.astro';
+import { faqs } from '../data/site';
+
+interface Props {
+  items?: { q: string; a: string }[];
+}
+const { items = faqs } = Astro.props;
+---
+
+<section class="section section--white faq" id="faq">
+  <div class="container faq__grid">
+    <div class="section-head" data-reveal="left">
+      <span class="eyebrow">Časté otázky</span>
+      <h2 class="h2">Na co se <span class="hl">ptáte.</span></h2>
+      <p class="lead">Nenašli jste odpověď? Zavolejte. Poradíme i s tím, jestli se auto vůbec vyplatí jet prověřit.</p>
+    </div>
+    <div class="faq__list">
+      {items.map((f, i) => (
+        <details class="qa" data-reveal style={`--d:${i % 4}`} open={i === 0}>
+          <summary>
+            <h3>{f.q}</h3>
+            <span class="qa__icon"><Icon name="plus" size={20} /></span>
+          </summary>
+          <div class="qa__body"><p>{f.a}</p></div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    border-radius: var(--r-xl);
+  }
+  .faq__grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+  .faq .section-head {
+    position: sticky;
+    top: 120px;
+  }
+  .faq__list {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .qa {
+    border-radius: var(--r);
+    background: var(--paper);
+    border: 1px solid transparent;
+    transition:
+      background-color 0.3s,
+      border-color 0.3s,
+      box-shadow 0.3s;
+  }
+  .qa[open] {
+    background: var(--surface);
+    border-color: var(--line);
+    box-shadow: var(--shadow);
+  }
+  .qa summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.4rem;
+    cursor: pointer;
+    list-style: none;
+  }
+  .qa summary::-webkit-details-marker {
+    display: none;
+  }
+  .qa h3 {
+    font-family: var(--font-body);
+    font-size: 1.06rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+  .qa__icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+    transition:
+      transform 0.45s var(--ease-spring),
+      background-color 0.3s,
+      color 0.3s;
+  }
+  .qa[open] .qa__icon {
+    transform: rotate(45deg);
+    background: var(--brand);
+    color: #fff;
+  }
+  .qa__body {
+    padding: 0 1.4rem 1.3rem;
+    color: var(--muted);
+  }
+  .qa[open] .qa__body {
+    animation: qa-in 0.45s var(--ease-out);
+  }
+  @keyframes qa-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+  @media (max-width: 960px) {
+    .faq__grid {
+      grid-template-columns: 1fr;
+    }
+    .faq .section-head {
+      position: static;
+      margin-bottom: 0;
+    }
+  }
+</style>

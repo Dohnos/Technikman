@@ -1,0 +1,46 @@
+---
+import LogoMark from './LogoMark.astro';
+interface Props {
+  href?: string;
+  inverse?: boolean;
+  size?: number;
+}
+const { href = '/', inverse = false, size = 40 } = Astro.props;
+---
+
+<a href={href} class:list={['logo', { 'logo--inverse': inverse }]} aria-label="Proklepto – úvodní stránka">
+  <LogoMark size={size} variant={inverse ? 'light' : 'default'} />
+  <span class="logo__word">proklepto</span>
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .logo--inverse {
+    color: #fff;
+  }
+  .logo__word {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.45rem;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .logo :global(.logo-tick) {
+    stroke-dasharray: 20;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.5s var(--ease-out);
+  }
+  .logo:hover :global(.logo-tick) {
+    animation: tick-draw 0.7s var(--ease-out);
+  }
+  @keyframes tick-draw {
+    from { stroke-dashoffset: 20; }
+    to { stroke-dashoffset: 0; }
+  }
+</style>

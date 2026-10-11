@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Risks from '../components/Risks.astro';
+import Checks from '../components/Checks.astro';
+import Process from '../components/Process.astro';
+import Why from '../components/Why.astro';
+import Pricing from '../components/Pricing.astro';
+import Coverage from '../components/Coverage.astro';
+import Faq from '../components/Faq.astro';
+import Contact from '../components/Contact.astro';
+import { faqs, plans } from '../data/site';
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<Base
+  title="Prověrka ojetého auta Olomouc a Morava | Proklepto"
+  description={`Nezávislá prověrka ojetého auta před koupí od ${plans[0].price} Kč. Historie a VIN, tloušťka laku, diagnostika, zkušební jízda a fotoprotokol ještě ten den. Olomoucký kraj, Brno, Zlín i Ostrava.`}
+  schema={[faqSchema]}
+>
+  <Hero />
+  <Risks />
+  <Checks />
+  <Process />
+  <Why />
+  <Pricing />
+  <Coverage />
+  <Faq />
+  <Contact />
+</Base>

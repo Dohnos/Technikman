@@ -1,0 +1,207 @@
+---
+import Icon from './Icon.astro';
+import { plans, site, formatPrice } from '../data/site';
+---
+
+<section class="section pricing" id="cenik">
+  <div class="container">
+    <div class="section-head section-head--center" data-reveal>
+      <span class="eyebrow">Ceník</span>
+      <h2 class="h2">Férová cena. <span class="hl">Žádná překvapení.</span></h2>
+      <p class="lead">Prověrka stojí zlomek toho, co byste zaplatili za jedinou skrytou závadu.</p>
+    </div>
+    <div class="plans">
+      {plans.map((p, i) => (
+        <article class:list={['plan', { 'plan--featured': p.featured }]} data-reveal="zoom" style={`--d:${i}`}>
+          {p.featured && <span class="plan__badge"><Icon name="star" size={14} /> Nejčastější volba</span>}
+          <div class="plan__head">
+            <div class:list={['icon-badge', { 'icon-badge--night': p.featured }]}><Icon name={p.icon} size={26} /></div>
+            <h3 class="h3">{p.name}</h3>
+          </div>
+          <p class="plan__price">
+            {p.priceFrom && <small>od</small>}
+            <strong>{formatPrice(p.price)}</strong>
+          </p>
+          <p class="plan__lead">{p.lead}</p>
+          <ul class="plan__list">
+            {p.features.map((f) => <li><Icon name="check" size={18} />{f}</li>)}
+          </ul>
+          <a class:list={['btn', 'btn--block', p.featured ? 'btn--brand' : 'btn--ghost']} href={`/#objednat`} data-plan={p.id}>
+            {p.cta} <Icon name="arrow" size={18} class="icon-arrow" />
+          </a>
+        </article>
+      ))}
+    </div>
+    <div class="pricing__note" data-reveal>
+      <Icon name="route" size={22} />
+      <p>
+        <strong>Doprava:</strong> Olomouc a okolí do {site.freeRadiusKm} km zdarma, dál {site.pricePerKm} Kč/km.
+        Prověřujete víc aut v jednom dni? Domluvíme zvýhodněnou cenu.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    align-items: stretch;
+  }
+  .plan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    padding: 2rem;
+    border-radius: var(--r-xl);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    transition:
+      transform 0.5s var(--ease-spring),
+      box-shadow 0.5s var(--ease-out);
+  }
+  .plan:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+  .plan__head {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .plan__price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+  .plan__price strong {
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .plan__price small {
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .plan__lead {
+    color: var(--muted);
+  }
+  .plan__list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+    margin-bottom: auto;
+    padding-bottom: 0.75rem;
+  }
+  .plan__list li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    font-size: 0.98rem;
+  }
+  .plan__list .icon {
+    flex-shrink: 0;
+    margin-top: 3px;
+    padding: 2px;
+    border-radius: 50%;
+    background: var(--ok-50);
+    color: var(--ok-600);
+  }
+
+  /* Featured – tmavá karta s rotujícím gradientním okrajem */
+  @property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  .plan--featured {
+    background: var(--night);
+    color: #e8ecf4;
+    box-shadow: var(--shadow-lg);
+    scale: 1.03;
+    isolation: isolate;
+  }
+  .plan--featured::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    border-radius: inherit;
+    background: conic-gradient(from var(--angle), var(--brand), var(--warn), var(--ok), var(--brand));
+    animation: rotate 5s linear infinite;
+  }
+  .plan--featured::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--night);
+  }
+  @keyframes rotate {
+    to {
+      --angle: 360deg;
+    }
+  }
+  .plan--featured .plan__lead {
+    color: #a9b3c6;
+  }
+  .plan--featured .plan__list .icon {
+    background: rgb(23 201 138 / 0.16);
+    color: var(--ok);
+  }
+  .plan--featured h3 {
+    color: #fff;
+  }
+  .plan__badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    translate: -50% 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--pill);
+    background: var(--brand);
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: var(--shadow-brand);
+  }
+  .plan__badge .icon {
+    fill: currentColor;
+  }
+  .pricing__note {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 52rem;
+    margin: 2.5rem auto 0;
+    padding: 1.1rem 1.4rem;
+    border-radius: var(--r);
+    background: var(--surface);
+    border: 1px dashed var(--line);
+    color: var(--ink-2);
+  }
+  .pricing__note > .icon {
+    color: var(--brand);
+    flex-shrink: 0;
+  }
+  @media (max-width: 960px) {
+    .plans {
+      grid-template-columns: 1fr;
+      max-width: 520px;
+      margin-inline: auto;
+    }
+    .plan--featured {
+      scale: none;
+    }
+  }
+</style>

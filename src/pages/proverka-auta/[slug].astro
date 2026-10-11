@@ -1,0 +1,188 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import Checks from '../../components/Checks.astro';
+import Process from '../../components/Process.astro';
+import Pricing from '../../components/Pricing.astro';
+import Coverage from '../../components/Coverage.astro';
+import Faq from '../../components/Faq.astro';
+import Contact from '../../components/Contact.astro';
+import Icon from '../../components/Icon.astro';
+import { pageCities, travelPrice, type City } from '../../data/regions';
+import { site, plans, faqs, formatPrice } from '../../data/site';
+
+export function getStaticPaths() {
+  return pageCities.map((city) => ({ params: { slug: city.slug }, props: { city } }));
+}
+
+interface Props {
+  city: City;
+}
+const { city } = Astro.props;
+const travel = travelPrice(city.distanceKm, site.freeRadiusKm, site.pricePerKm);
+const total = plans[1].price + travel;
+const travelText = travel === 0 ? 'zdarma' : `cca ${formatPrice(travel)}`;
+const siteUrl = (Astro.site ?? new URL(site.url)).href;
+
+const cityFaqs = [
+  {
+    q: `Kolik stojí prověrka ojetého auta ${city.locative}?`,
+    a:
+      travel === 0
+        ? `Kompletní prověrka ${city.locative} stojí ${plans[1].price.toLocaleString('cs-CZ')} Kč a doprava je zdarma.`
+        : `Kompletní prověrka stojí ${plans[1].price.toLocaleString('cs-CZ')} Kč. Doprava z Olomouce (cca ${city.distanceKm} km) vychází přibližně na ${travel.toLocaleString('cs-CZ')} Kč, celkem tedy zhruba ${total.toLocaleString('cs-CZ')} Kč. Při více prověrkách v jednom dni cenu dopravy dělíme.`,
+  },
+  {
+    q: `Jak rychle zvládnete prověrku ${city.locative}?`,
+    a: `Termín ${city.locative} domluvíme obvykle do 48 hodin od objednání. Jezdíme i do okolí: ${city.nearby.join(', ')}.`,
+  },
+  ...faqs.filter((f) => !f.q.startsWith('Kolik stojí') && !f.q.startsWith('Kde všude')),
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: `Prověrka ojetého auta ${city.locative}`,
+    serviceType: 'Prověrka ojetého automobilu před koupí',
+    provider: { '@id': `${siteUrl}#business` },
+    areaServed: { '@type': 'City', name: city.name, containedInPlace: { '@type': 'AdministrativeArea', name: city.region } },
+    offers: plans.map((p) => ({ '@type': 'Offer', name: p.name, price: p.price, priceCurrency: 'CZK' })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Proklepto', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: 'Prověrka auta', item: new URL('/proverka-auta/', siteUrl).href },
+      { '@type': 'ListItem', position: 3, name: city.name, item: new URL(`/proverka-auta/${city.slug}/`, siteUrl).href },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: cityFaqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+
+const facts = [
+  { icon: 'route', label: 'Vzdálenost z Olomouce', value: city.distanceKm === 0 ? 'Jsme tady' : `cca ${city.distanceKm} km` },
+  { icon: 'wallet', label: 'Doprava', value: travelText },
+  { icon: 'clock', label: 'Termín', value: 'obvykle do 48 h' },
+];
+---
+
+<Base
+  title={`Prověrka ojetého auta ${city.name} | Proklepto`}
+  description={`Nezávislá prověrka ojetého auta ${city.locative} a okolí. Kontrola historie, VIN, laku, diagnostika a zkušební jízda. Kompletní prověrka za ${plans[1].price.toLocaleString('cs-CZ')} Kč, doprava ${travelText}.`}
+  schema={schema}
+>
+  <nav class="container crumbs" aria-label="Drobečková navigace">
+    <ol>
+      <li><a href="/">Úvod</a></li>
+      <li><a href="/proverka-auta/">Prověrka auta</a></li>
+      <li aria-current="page">{city.name}</li>
+    </ol>
+  </nav>
+
+  <Hero
+    eyebrow={`Prověrka auta · ${city.region}`}
+    title="Prověrka ojetého auta"
+    highlight={`${city.locative}.`}
+    lead={`${city.intro} Odhalíme stočené kilometry, skrytou bouračku i drahé závady dřív, než zaplatíte.`}
+  />
+
+  <section class="container local" aria-label={`Prověrka ${city.locative} v kostce`}>
+    <div class="local__facts">
+      {facts.map((f, i) => (
+        <div class="local__fact" data-reveal style={`--d:${i}`}>
+          <span class="icon-badge"><Icon name={f.icon} size={24} /></span>
+          <span><small>{f.label}</small><b>{f.value}</b></span>
+        </div>
+      ))}
+    </div>
+    <p class="local__nearby" data-reveal>
+      <Icon name="pin" size={18} />
+      <span>Prověřujeme i v okolí {city.genitive}: <strong>{city.nearby.join(', ')}</strong>.</span>
+    </p>
+  </section>
+
+  <Checks />
+  <Process />
+  <Pricing />
+  <Coverage active={city.slug} />
+  <Faq items={cityFaqs} />
+  <Contact city={city.name} />
+</Base>
+
+<style>
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    padding: 0.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .crumbs li + li::before {
+    content: '›';
+    margin-right: 0.4rem;
+    color: var(--muted);
+  }
+  .crumbs a {
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--brand);
+  }
+  .local {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: var(--section);
+  }
+  .local__facts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .local__fact {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  .local__fact small {
+    display: block;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .local__fact b {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+  }
+  .local__nearby {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: var(--muted);
+  }
+  .local__nearby .icon {
+    flex-shrink: 0;
+    margin-top: 3px;
+    color: var(--brand);
+  }
+  .local__nearby strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  @media (max-width: 760px) {
+    .local__facts {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

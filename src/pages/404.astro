@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<Base title="Stránka nenalezena | Proklepto" description="Tuhle stránku jsme neproklepli. Zkuste úvodní stránku." noindex>
+  <section class="section nf">
+    <div class="container nf__box">
+      <p class="nf__code">404</p>
+      <h1 class="h2">Tuhle stránku jsme <span class="hl">neproklepli.</span></h1>
+      <p class="lead">Odkaz je možná starý, nebo se překlepl. Auto vám ale prověříme rádi.</p>
+      <a class="btn btn--brand btn--lg" href="/">Zpět na úvod <Icon name="arrow" size={20} class="icon-arrow" /></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf__box {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+    text-align: center;
+  }
+  .nf__code {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(6rem, 20vw, 12rem);
+    line-height: 1;
+    letter-spacing: -0.06em;
+    color: var(--brand);
+    animation: wobble 2.4s var(--ease-spring) infinite;
+  }
+  @keyframes wobble {
+    0%, 100% { transform: rotate(0); }
+    10% { transform: rotate(-4deg); }
+    20% { transform: rotate(3deg); }
+    30% { transform: rotate(0); }
+  }
+</style>

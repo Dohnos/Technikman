@@ -1,0 +1,174 @@
+---
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/bricolage-grotesque/wght.css';
+import '../styles/global.css';
+import displayFont from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
+import bodyFont from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site, plans } from '../data/site';
+import { cities, regions } from '../data/regions';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+  schema?: Record<string, unknown>[];
+}
+
+const { title, description, image = '/og-image.png', noindex = false, schema = [] } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+const ogImage = new URL(image, Astro.site ?? site.url).href;
+const siteUrl = (Astro.site ?? new URL(site.url)).href;
+
+const business = {
+  '@context': 'https://schema.org',
+  '@type': 'AutomotiveBusiness',
+  '@id': `${siteUrl}#business`,
+  name: site.name,
+  slogan: site.tagline,
+  description: site.description,
+  url: siteUrl,
+  logo: new URL('/icon-512.png', siteUrl).href,
+  image: new URL('/og-image.png', siteUrl).href,
+  telephone: site.phone,
+  email: site.email,
+  priceRange: `${plans[0].price}–${plans[2].price} CZK`,
+  currenciesAccepted: 'CZK',
+  paymentAccepted: 'Cash, Bank transfer',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: site.baseCity,
+    addressRegion: regions.olomoucky,
+    addressCountry: 'CZ',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: site.baseGeo.lat, longitude: site.baseGeo.lon },
+  areaServed: [
+    ...Object.values(regions).map((name) => ({ '@type': 'AdministrativeArea', name })),
+    ...cities.map((c) => ({ '@type': 'City', name: c.name })),
+  ],
+  openingHoursSpecification: site.openingHoursSpec.map((o) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: o.days,
+    opens: o.opens,
+    closes: o.closes,
+  })),
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Prověrka ojetého vozu',
+    itemListElement: plans.map((p) => ({
+      '@type': 'Offer',
+      name: p.name,
+      description: p.lead,
+      price: p.price,
+      priceCurrency: 'CZK',
+      ...(p.priceFrom
+        ? { priceSpecification: { '@type': 'PriceSpecification', minPrice: p.price, priceCurrency: 'CZK' } }
+        : {}),
+      itemOffered: { '@type': 'Service', name: p.name, serviceType: 'Prověrka ojetého automobilu' },
+    })),
+  },
+};
+
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteUrl}#website`,
+  url: siteUrl,
+  name: site.name,
+  inLanguage: 'cs-CZ',
+  publisher: { '@id': `${siteUrl}#business` },
+};
+
+const jsonLd = [business, website, ...schema];
+---
+
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex, follow" /> : <meta name="robots" content="index, follow, max-image-preview:large" />}
+    <meta name="theme-color" content="#101828" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="author" content={site.name} />
+    <meta name="geo.region" content="CZ-71" />
+    <meta name="geo.placename" content={site.baseCity} />
+    <meta name="geo.position" content={`${site.baseGeo.lat};${site.baseGeo.lon}`} />
+    <meta name="ICBM" content={`${site.baseGeo.lat}, ${site.baseGeo.lon}`} />
+
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="cs_CZ" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Proklepto – nezávislá prověrka ojetých aut" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+    {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+  </head>
+  <body>
+    <a class="skip-link" href="#obsah">Přeskočit na obsah</a>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <Header />
+    <main id="obsah">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Scroll reveal – jedna sdílená IntersectionObserver instance.
+      const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-in');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+        );
+        els.forEach((el) => io.observe(el));
+      } else {
+        els.forEach((el) => el.classList.add('is-in'));
+      }
+
+      // Sekce, které spouští vlastní animace při vstupu do viewportu
+      const scenes = document.querySelectorAll<HTMLElement>('[data-scene]');
+      const so = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((e) => {
+            e.target.classList.toggle('in-view', e.isIntersecting);
+            if (e.isIntersecting) e.target.classList.add('seen');
+          }),
+        { threshold: 0.2 },
+      );
+      scenes.forEach((el) => so.observe(el));
+    </script>
+  </body>
+</html>

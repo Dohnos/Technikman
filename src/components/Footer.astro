@@ -1,0 +1,123 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+import { pageCities } from '../data/regions';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <Logo inverse />
+      <p>Nezávislá prověrka ojetých aut před koupí. Olomoucký kraj a celá Morava.</p>
+      <div class="footer__contact">
+        <a href={site.phoneHref}><Icon name="phone" size={18} />{site.phone}</a>
+        <a href={`mailto:${site.email}`}><Icon name="mail" size={18} />{site.email}</a>
+        <span><Icon name="clock" size={18} />{site.hours}</span>
+      </div>
+    </div>
+    <nav aria-label="Prověrka auta podle města">
+      <p class="footer__title">Prověrka auta</p>
+      <ul class="footer__cities">
+        {pageCities.map((c) => <li><a href={`/proverka-auta/${c.slug}/`}>{c.name}</a></li>)}
+      </ul>
+    </nav>
+    <nav aria-label="Odkazy">
+      <p class="footer__title">Proklepto</p>
+      <ul>
+        <li><a href="/#co-kontrolujeme">Co kontrolujeme</a></li>
+        <li><a href="/#jak-to-funguje">Jak to funguje</a></li>
+        <li><a href="/#cenik">Ceník</a></li>
+        <li><a href="/#faq">Časté otázky</a></li>
+        <li><a href="/#objednat">Objednat prověrku</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="container footer__bottom">
+    <span>© {year} {site.name}. Všechna práva vyhrazena.</span>
+    <span>v{site.version} · <a href="/brand/">Brand manuál</a></span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--night);
+    color: #a9b3c6;
+    padding-block: clamp(56px, 8vw, 88px) 28px;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    margin-top: -1px;
+  }
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1.3fr 1fr;
+    gap: 2.5rem;
+  }
+  .footer__brand p {
+    margin-block: 1rem 1.5rem;
+    max-width: 22rem;
+  }
+  .footer__contact {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .footer__contact > * {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #e8ecf4;
+    text-decoration: none;
+    width: fit-content;
+  }
+  .footer__contact .icon {
+    color: var(--brand);
+  }
+  .footer__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+  }
+  .footer ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .footer__cities {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .footer a {
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer nav a:hover,
+  .footer__contact a:hover,
+  .footer__bottom a:hover {
+    color: #fff;
+  }
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgb(255 255 255 / 0.08);
+    font-size: 0.9rem;
+  }
+  @media (max-width: 860px) {
+    .footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer__brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 480px) {
+    .footer__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

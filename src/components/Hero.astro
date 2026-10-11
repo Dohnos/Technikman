@@ -1,0 +1,176 @@
+---
+import Icon from './Icon.astro';
+import HeroScene from './HeroScene.astro';
+import { plans, formatPrice } from '../data/site';
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  highlight?: string;
+  lead?: string;
+}
+const {
+  eyebrow = 'Nezávislý technik · Olomoucký kraj a celá Morava',
+  title = 'Ojetinu nejdřív',
+  highlight = 'proklepneme.',
+  lead = 'Prověříme ojeté auto dřív, než za něj zaplatíte. Odhalíme stočené kilometry, skrytou bouračku i drahé závady. Do protokolu dostanete jasný verdikt: koupit, nebo ne.',
+} = Astro.props;
+
+const words = title.split(' ');
+const trust = [
+  { icon: 'user', text: 'Nejsme prodejci, nebereme provize' },
+  { icon: 'camera', text: 'Fotoprotokol ještě ten den' },
+  { icon: 'wallet', text: 'Platíte až po prověrce' },
+];
+---
+
+<section class="hero">
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <span class="eyebrow hero__in" style="--i:0">{eyebrow}</span>
+      <h1 class="h1 hero__title">
+        {words.map((w, i) => <span class="word" style={`--i:${i + 1}`}>{w}</span>)}
+        <span class="word word--hl" style={`--i:${words.length + 1}`}>
+          {highlight}
+          <svg class="scribble" viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M4 16C60 6 140 4 296 12" pathLength="100"></path>
+          </svg>
+        </span>
+      </h1>
+      <p class="lead hero__in" style="--i:5">{lead}</p>
+      <div class="hero__cta hero__in" style="--i:6">
+        <a class="btn btn--brand btn--lg" href="#objednat">
+          Objednat prověrku <Icon name="arrow" size={20} class="icon-arrow" />
+        </a>
+        <a class="btn btn--ghost btn--lg" href="#co-kontrolujeme">Co kontrolujeme</a>
+      </div>
+      <p class="hero__price hero__in" style="--i:7">
+        Kompletní prověrka na místě za <strong>{formatPrice(plans[1].price)}</strong>
+      </p>
+      <ul class="hero__trust hero__in" style="--i:8">
+        {trust.map((t) => <li class="chip"><Icon name={t.icon} size={18} />{t.text}</li>)}
+      </ul>
+    </div>
+    <div class="hero__visual">
+      <HeroScene />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(24px, 5vw, 64px) clamp(56px, 8vw, 104px);
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: -120px 0 auto;
+    height: 640px;
+    background: radial-gradient(60% 60% at 15% 20%, rgb(255 90 31 / 0.1), transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1.02fr 1fr;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4.5rem);
+  }
+  .hero__copy {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+  .hero__title {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.25em;
+  }
+  .word {
+    display: inline-block;
+    animation: word-in 0.9s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 80ms);
+  }
+  .word--hl {
+    position: relative;
+    color: var(--brand);
+  }
+  .scribble {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.12em;
+    width: 100%;
+    height: 0.28em;
+    overflow: visible;
+  }
+  .scribble path {
+    fill: none;
+    stroke: var(--ok);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw 1s var(--ease-out) 0.9s forwards;
+  }
+  .hero__in {
+    animation: word-in 0.9s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 80ms + 120ms);
+  }
+  @keyframes word-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.6em);
+      filter: blur(6px);
+    }
+  }
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .hero__price {
+    color: var(--muted);
+    font-size: 0.98rem;
+  }
+  .hero__price strong {
+    color: var(--ink);
+  }
+  .hero__trust {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .hero__visual {
+    animation: visual-in 1.2s var(--ease-out) 0.2s both;
+  }
+  @keyframes visual-in {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.96);
+    }
+  }
+  @media (max-width: 960px) {
+    .hero__grid {
+      grid-template-columns: 1fr;
+    }
+    .hero__visual {
+      max-width: 600px;
+      width: 100%;
+      margin-inline: auto;
+    }
+  }
+  @media (max-width: 520px) {
+    .hero__cta .btn {
+      width: 100%;
+    }
+  }
+</style>
